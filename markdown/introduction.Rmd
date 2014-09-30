@@ -9,6 +9,9 @@ header-includes:
 - \usepackage{charter}
 ---
 
+> Global Cost of Cash Benchmarking Database   
+> Institute for Business in the Global Context   
+> Principal Investigator: Bhaskar Chakravorti
 
 ## Overview
 
@@ -27,6 +30,13 @@ The cost benchmarking exercise proceeds in eight (8) parts.
 
 The source data and analysis for each of these methods are described in markdown documents that accompany the main findings.
 
+## World Bank Data
+
+Basic country data are drawn from World Development Indicators.  
+
+File | Accessed | Contents
+--- | --- | ---
+worldbank.Rda | Sep 30 | GDP, GDP per capita, population
 
 ---
 

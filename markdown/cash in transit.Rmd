@@ -1,0 +1,59 @@
+---
+title: "Costs 2: Cash in Transit"
+author: "Benjamin D. Mazzotta"
+date: "Tuesday, September 30, 2014"
+output: pdf_document
+header-includes:
+- \usepackage{euler}
+- \usepackage{longtable}
+- \usepackage{charter}
+---
+
+> Global Cost of Cash Benchmarking Database   
+> Institute for Business in the Global Context   
+> Principal Investigator: Bhaskar Chakravorti
+
+## Overview
+
+This is \S2, Cash in Transit, of eight (8) to be completed: ATMs,  Cash in transit,  Household costs,  Currency operations, Tax gap, Fraud, Foregone growth, and Seigniorage.
+
+## Methodology
+
+Cash in transit costs are benchmarked to the number of bank branches in a country.
+
+
+## World Bank Data
+
+Variable | Indicator 
+--- | ---
+bankdensity | Bank branches per 100k population
+pop | Population, Total (millions)
+gdp | GDP, constant 2005 USD at PPP (millions)
+
+## US Economic Census Data
+
+Gross receipts for armored car service in the United States are $2.323 million. There are 781 establishments with a total of 29,748 employees (2012). \footnote{United States Census Bureau. 2012. Economic Census: Industry Snapshots. Available at \url{http://thedataweb.rm.census.gov/TheDataWeb_HotReport2/econsnapshot/2012/snapshot.html?NAICS=561613}}
+
+## Model
+
+CIT revenues are forecast as a straight multiple of the number of bank branches in a country. CIT revenues will be scaled down with the price level in each country, as measured by the PPP ratio indicator.
+
+
+
+$$ CIT_i = CIT_\omega * \frac{b_i \Pi_i}{b_\omega} $$ 
+
+
+Where 
+
+Var | Description
+--- | ---
+$CIT_i$ | Cash in transit in country $i$
+$CIT_\omega$ | Cash in transit in the United States
+$b_i$ | Bank branches in country $i$
+$b_\omega$ | Bank branches in the United States 
+$\Pi_i$ | Price level ratio in country $i$, relative to the United States
+
+
+---
+
+\small Ben Mazzotta is a postdoc at the Institute for Business in the Global Context ([IBGC](http://fletcher.tufts.edu/IBGC)), The Fletcher School, Tufts University.
