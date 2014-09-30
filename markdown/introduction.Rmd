@@ -1,0 +1,33 @@
+---
+title: "Dataset Overview"
+author: "Benjamin D. Mazzotta"
+date: "Tuesday, September 30, 2014"
+output: pdf_document
+header-includes:
+- \usepackage{euler}
+- \usepackage{longtable}
+- \usepackage{charter}
+---
+
+
+## Overview
+
+The cost benchmarking exercise proceeds in eight (8) parts.
+
+1. ATMs
+2. Cash in transit
+3. Household costs
+4. Currency operations
+5. Tax gap
+6. Fraud
+7. Foregone growth
+8. Seigniorage (benefits)
+
+## Methodology
+
+The source data and analysis for each of these methods are described in markdown documents that accompany the main findings.
+
+
+---
+
+\small Ben Mazzotta is a postdoc at the Institute for Business in the Global Context ([IBGC](http://fletcher.tufts.edu/IBGC)), The Fletcher School, Tufts University.
