@@ -17,12 +17,62 @@ header-includes:
 
 This is \S2, Cash in Transit, of eight (8) to be completed: ATMs,  Cash in transit,  Household costs,  Currency operations, Tax gap, Fraud, Foregone growth, and Seigniorage.
 
+## Top 20 markets
+
+The top 20 and bottom 20 CIT markets appear in Tables \ref{tab:CITtop20} and \ref{tab:CITbottom20}. Cash in transit revenues are estimated in USD at PPP for 2012, nearest whole dollar. *Estimates are very rough* and should not be quoted to more than 2 digits. No formal confidence intervals should be reported under the methodology used.
+
+```{r top20CIT, fig.width=10, fig.height=6, results='asis', echo=FALSE, warning=FALSE, message=FALSE}
+setwd("../data")
+require(stargazer)
+require(ggplot2)
+require(data.table)
+load(file="Cash in transit.Rda")
+
+setkey(cashintransit, CITest)
+
+stargazer(tail(cashintransit[, .SD, .SDcols=c("country","CITest")], 20), title = "20 Largest CIT Markets", label="tab:CITtop20", header = F, summary=F, digits=0, table.placement = "p")
+stargazer(head(cashintransit[, .SD, .SDcols=c("country","CITest")], 20), title = "20 Smallest CIT Markets",label="tab:CITbottom20",  header = F, summary=F, digits=0, table.placement="p")
+
+qplot(gdp, CITest, data=cashintransit, geom="text", label=iso3c, log="xy") + labs(title="Cash in Transit Revenues vs. GDP \n Log-log scale. Estimates by Author's Calculations.", x="GDP at PPP", y="Estimated CIT revenues in USD at PPP, 2012")
+
+```
+
+### By region
+
+See regional market size ranks in Tables \ref{tab:CITtop10LAC}, \ref{tab:CITtop10EAP}, \ref{tab:CITtop10MENA}, \ref{tab:CITtop10SSA} and \ref{tab:CITtop10SAs}
+
+```{r CITtablesbyregion, message=F, echo=F, warning=F, results='asis'}
+
+stargazer(tail(cashintransit[region=="Latin America & Caribbean (all income levels)",.SD, .SDcols=c("country","CITest")], 10),
+  title = "10 Largest CIT Markets in Latin America, Caribbean", label="tab:CITtop10LAC", header = F, summary=F, digits=0, table.placement = "p"
+  )
+
+stargazer(tail(cashintransit[region=="East Asia & Pacific (all income levels)",.SD, .SDcols=c("country","CITest")], 10),
+  title = "10 Largest CIT Markets in East Asia, Pacific", label="tab:CITtop10EAP", header = F, summary=F, digits=0, table.placement = "p"
+  )
+
+stargazer(tail(cashintransit[region=="Middle East & North Africa (all income levels)",.SD, .SDcols=c("country","CITest")], 10),
+  title = "10 Largest CIT Markets in Middle East, North Africa", label="tab:CITtop10MENA", header = F, summary=F, digits=0, table.placement = "p"
+  )
+
+stargazer(tail(cashintransit[region=="Sub-Saharan Africa (all income levels)",.SD, .SDcols=c("country","CITest")], 10),
+  title = "10 Largest CIT Markets in Sub-Saharan Africa", label="tab:CITtop10SSA", header = F, summary=F, digits=0, table.placement = "p"
+  )
+
+stargazer(tail(cashintransit[region=="South Asia",.SD, .SDcols=c("country","CITest")], 10),
+  title = "10 Largest CIT Markets in South Asia", label="tab:CITtop10SAs", header = F, summary=F, digits=0, table.placement = "p"
+  )
+
+```
+
+
+
 ## Methodology
 
-Cash in transit costs are benchmarked to the number of bank branches in a country.
+Cash in transit costs are benchmarked to the number of bank branches in a country. We take CIT to be a linear multiple of bank branches in the country, adjusted for PPP price ratios. In expensive countries, CIT revenues are higher than in cheaper countries, as reflected in the price level ratio between the countries.
 
 
-## World Bank Data
+### World Bank Data
 
 Variable | Indicator 
 --- | ---
@@ -30,9 +80,9 @@ bankdensity | Bank branches per 100k population
 pop | Population, Total (millions)
 gdp | GDP, constant 2005 USD at PPP (millions)
 
-## US Economic Census Data
+### US Economic Census Data
 
-Gross receipts for armored car service in the United States are $2.323 million. There are 781 establishments with a total of 29,748 employees (2012). \footnote{United States Census Bureau. 2012. Economic Census: Industry Snapshots. Available at \url{http://thedataweb.rm.census.gov/TheDataWeb_HotReport2/econsnapshot/2012/snapshot.html?NAICS=561613}}
+Gross receipts for armored car service in the United States are $2,323 million. There are 781 establishments with a total of 29,748 employees (2012).\footnote{United States Census Bureau. 2012. Economic Census: Industry Snapshots. Available at \url{http://thedataweb.rm.census.gov/TheDataWeb_HotReport2/econsnapshot/2012/snapshot.html?NAICS=561613}}
 
 ## Model
 
@@ -40,7 +90,7 @@ CIT revenues are forecast as a straight multiple of the number of bank branches 
 
 
 
-$$ CIT_i = CIT_\omega * \frac{b_i \Pi_i}{b_\omega} $$ 
+$$ CIT_i = CIT_\omega \frac{b_i \Pi_i}{b_\omega} $$ 
 
 
 Where 

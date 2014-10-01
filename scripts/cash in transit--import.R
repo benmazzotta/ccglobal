@@ -53,7 +53,7 @@ rm(list=c("v.bankbranches","v.population","v.pricelevel", "v.gdp"))
 #     2. Calculate CIT per branch in the United States
 
 #       Straight line estimate from 2007 to 2012
-CIT.usa <- seq(2.225, 2.323, length.out=6)
+CIT.usa <- seq(2225, 2323, length.out=6)
 attr(CIT.usa, "var.label") <- "CIT revenues in the United States in 2012, USD millions"
 
 #     Annual observations
@@ -66,20 +66,72 @@ str(CIT.usa)
 CIT.usa <- data.table(CIT.usa)
 setkey(CIT.usa, country)
 
-branches[,CIT := NA]
-setkey(branches, country)
-branches["United States",]
+# branches[,CIT := NA]
+# setkey(branches, country)
+# branches["United States",]
 
 
 #       Merge CIT and USA branches data.
-
 temp <- merge(CIT.usa, branches, all.x=FALSE, by=c("country","year"))
+
+
+##      How much GDP per bank branch?
 lm1 <- lm(gdp/10^6 ~ banks+0, data=temp)
 summary(lm1)
 
-lm2 <- lm(CIT.x*10^6 ~ banks+0, data=temp)
+##      How much CIT per bank branch?
+lm2 <- lm(CIT*10^6 ~ banks+0, data=temp)
 summary(lm2)
+rm(temp)
 
-#       Estimate CIT per branch in the United States
+##      Globally, predict CIT_i
+
+branches[,CIT_hat := predict(lm2, branches)]
+summary(branches$CIT_hat * branches$pricelevel)
+attr(branches$CIT_hat, "var.label") <- "National CIT revenues in 2012, USD millions"
+branches[,CIT_hat := CIT_hat * pricelevel]
+
+##      Test results
+setkey(branches, CIT_hat)
+head(branches[!is.na(CIT_hat) & year==2012,], 20)
+tail(branches[!is.na(CIT_hat) & year==2012,], 20)
 
 
+setkey(branches, banks)
+head(branches[!is.na(CIT_hat) & year==2012,], 20)
+tail(branches[!is.na(CIT_hat) & year==2012,], 20)
+
+summary(branches)
+names(branches)
+
+## Don't need the linear models anymore
+rm(lm1); rm(lm2)
+
+
+##      Let's get estimated averages per country
+setkey(branches, country, year)
+branches[,CITest := mean(CIT_hat, na.rm=T), by=country]
+summary(branches)
+
+
+str(branches)
+cashintransit <- branches[!is.na(CITest), .SD[which.max(year), ], by=country]
+summary(cashintransit)
+
+table(cashintransit$year)
+with(cashintransit, table(is.na(CIT_hat), is.na(CITest)))
+
+##        Some of these variables are distracting
+names(cashintransit)
+dropme <- list("branchdensity","longitude","latitude","capital")
+lapply(dropme, function(x) cashintransit[,paste(x):=NULL])
+names(cashintransit)
+rm(dropme)
+
+
+##        Save cashintransit
+save(branches, file="Cash in transit multiyear.Rda")
+save(cashintransit, file="Cash in transit.Rda")
+save.image("CIT.Rdata")
+
+tables()
