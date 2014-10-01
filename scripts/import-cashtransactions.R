@@ -37,9 +37,14 @@ View(fincl)
 var.remittances <- WDIsearch("Remittances and compensation")[2,1]
 remit <- WDI(indicator = "BX.TRF.PWKR.CD.DT", country = "all", start = 2011, end=2011, extra=TRUE)
 setnames(remit, var.remittances, "remittances")
-remit <- data.table(remit[remit$region != "Aggregates", c("country","remittances","iso3c","iso2c","income","lending", "year")])
+remit <- subset(remit, region!="Aggregates")
+names(remit)
+remit <- remit[,c("country","remittances","iso3c","iso2c", "region","income","lending", "year")]
+remit <- data.table(remit)
+
 
 summary(remit)
+rownames(remit)
 
 remit[,remit_MM := remittances/10^6]
 setkey(remit, remittances, country)
@@ -108,7 +113,7 @@ str(rpw11)
 
 ##        Many observations per corridor
 
-rpw11[,destpriceavg := mean(price), by=destination]
+rpw11[,destpriceavg := mean(price, na.rm=T), by=destination]
 
 rpw11_avgrec <- rpw11[,.SD, .SDcols=c("destination","destpriceavg","iso3c")]
 setkey(rpw11_avgrec,destination)
@@ -123,9 +128,29 @@ save(rpw13, file= "remittance prices worldwide 2013.Rda")
 save(rpw14, file= "remittance prices worldwide 2014.Rda")
 save(rpw11_avgrec, file="remittance prices avg by dest 2011.Rda")
 
+rm(list=c("rpw", "rpw11", "rpw12","rpw13","rpw14"))
+
 #       Save data
 save(fincl, file="national payments received via GFDD.Rda")
 save(remit, file="national remittances value and volume.Rda")
+
+
+##      This is where the join started to break down. Troubleshot everything above.
+##          RESUME HERE 2014 10 01
+
+View(rpw11_avgrec)
+str(remit); str(rpw11_avgrec)
+remit[,newiso3c := as.character(iso3c)]
+rpw11_avgrec[,newiso3c := as.character(destination)]
+
+setkey(remit, newiso3c); setkey(rpw11_avgrec, newiso3c)
+rm(temp)
+temp <- rpw11_avgrec[J(remit)]
+setkey(temp, country, year)
+str(temp)
+View(temp)
+
+View(remit); View(rpw11_avgrec)
 
 save.image("remittances.Rdata")
 save.image("archive 20141001.Rdata")
