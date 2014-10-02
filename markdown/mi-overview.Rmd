@@ -1,0 +1,29 @@
+---
+title: "Multiple Imputation with Remittances Data"
+author: "Ben Mazzotta"
+date: "Thursday, October 02, 2014"
+output: pdf_document
+header-includes:
+- \usepackage{charter}
+- \usepackage{euler}
+- \usepackage{longtable}
+---
+
+
+## overview
+
+IBGC is benchmarking the cost of cash worldwide. In order to do that, we rely on estimates of the rate of international remittances, domestic remittances and cash-out transcations in countries around the world. Missing data is a gigantic problem with remittances and cash transactions. 
+
+Multiple imputation, first described in Rubin (1987), improved regression estimates from datasets corrupted by missing observations.\footnote{Rubin, DB. 1987. *Multiple Imputation for NOnresponse in Surveys*. John Wiley \& Sons, New York.} Software to accomplish this in R is available in open source, using packages `Amelia` and `Zelig` from the Comprehensive R Archive Network.\footnote{James Honaker, Gary King, Matthew Blackwell (2011). Amelia II: A Program for Missing Data. Journal of  Statistical Software, 45(7), 1-47. \url{http://www.jstatsoft.org/v45/i07/}; Matt Owen, Kosuke Imai, Gary King and Olivia Lau (2013). Zelig: Everyone's Statistical Software. R package version 4.2-1. \url{http://CRAN.R-project.org/package=Zelig}; R Core Team (2014). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.  \url{http://www.R-project.org/}}
+
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+
+$\square$
+---
+
+
+\footnotesize{Benjamin D. Mazzotta is a postdoc at the Institute for Business in the Global Context ([IBGC](http://fletchre.tufts.edu/ibgc)), The Fletcher School, Tufts University.}
