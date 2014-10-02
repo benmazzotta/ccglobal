@@ -1,0 +1,50 @@
+---
+title:  Multiple imputation for missing data on cash prices.
+author: Ben Mazzotta
+affiliation:  Cost of Cash Global
+date:  10/1/2014
+output: pdf_document
+---
+
+## Goals
+
+1. Begin with remittances dataset and financial inclusion covariates.
+2. Impute prices for cashout transactions where unavailable.
+3. Impute rates for caashout transactions where unavailable.
+4. Model national costs of cashout transactions from combined dataset, i.e., imputed and reported.
+
+
+```{r preliminaries, comment=F, warning=FALSE, echo=FALSE}
+#    Amelia package does imputation
+require(Amelia) ; require(data.table) ; require(ggplot2)
+
+#   open the data
+load("../data/remittances.Rdata")
+
+#   join financial inclusion to remittances data
+
+```
+
+
+## Impute prices 
+
+Cashout transactions are poorly reported. Fewer than half of countries in the remittance prices worldwide dataset have average prices for a cashout transaction. None of these are rich countries.
+
+Cashout transactions are the basis for our estimates of cash fees. Without them we are dead in the water. So what are those fees? We need to impute the data.
+
+Covariates of cashout fees
+
+* financial access
+* bank density per capita
+* remittances inbound
+* gdp per capita
+* PPP price level ratio
+
+```{r imputeprices}
+
+```
+
+
+#     1. Open the datasets
+
+#     2.  

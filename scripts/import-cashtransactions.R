@@ -101,13 +101,20 @@ str(remit)
 rpw <- data.table(read.delim(file="rpw_dataset_2011_2014_q2.csv", header=T, sep=","))
 rpw[,year:= as.numeric(substr(period, 1,4))]
 rpw[,price:= cc1.total.cost../2]
-rpw[,iso3c:=countrycode(sourcevar=destination, origin="wb",destination="iso3c")]
+rpw[,iso3c:=destination]
 rpw[,dyad:=paste(source, destination, sep="_")]
 
-rpw11 <- rpw[year==2011, .SD, .SDcols=c("source","destination","price","iso3c", "dyad")]
-rpw12 <- rpw[year==2012, .SD, .SDcols=c("source","destination","price","iso3c", "dyad")]
-rpw13 <- rpw[year==2013, .SD, .SDcols=c("source","destination","price","iso3c", "dyad")]
-rpw14 <- rpw[year==2014, .SD, .SDcols=c("source","destination","price","iso3c", "dyad")]
+##      Which cases matter for cash withdrawal?
+str(rpw$pick.up.method)
+cashmethods <- grep("Cash", levels(rpw$pick.up.method), value=T)
+sum(rpw$pick.up.method %in% cashmethods)
+
+rpw[,cashout:= pick.up.method %in% cashmethods]
+
+rpw11 <- rpw[year==2011 & cashout==T, .SD, .SDcols=c("source","destination","price","iso3c", "dyad")]
+rpw12 <- rpw[year==2012 & cashout==T, .SD, .SDcols=c("source","destination","price","iso3c", "dyad")]
+rpw13 <- rpw[year==2013 & cashout==T, .SD, .SDcols=c("source","destination","price","iso3c", "dyad")]
+rpw14 <- rpw[year==2014 & cashout==T, .SD, .SDcols=c("source","destination","price","iso3c", "dyad")]
 
 str(rpw11)
 
@@ -138,19 +145,49 @@ save(remit, file="national remittances value and volume.Rda")
 ##      This is where the join started to break down. Troubleshot everything above.
 ##          RESUME HERE 2014 10 01
 
-View(rpw11_avgrec)
-str(remit); str(rpw11_avgrec)
-remit[,newiso3c := as.character(iso3c)]
-rpw11_avgrec[,newiso3c := as.character(destination)]
+# View(rpw11_avgrec)
+# str(remit); str(rpw11_avgrec)
+summary(remit)
 
-setkey(remit, newiso3c); setkey(rpw11_avgrec, newiso3c)
-rm(temp)
-temp <- rpw11_avgrec[J(remit)]
-setkey(temp, country, year)
-str(temp)
-View(temp)
+##        Drop Cape Verde observation from remit.dt
+remit<- remit[country !="Cape Verde",]
 
-View(remit); View(rpw11_avgrec)
+# 
+# ##        Joins failed because "destination" and "iso3c" used different factor variables for the same country codes.
+# remit[,iso3c := as.character(iso3c)]
+# rpw11_avgrec[,iso3c := as.character(iso3c)]
+
+sum(duplicated(remit$iso3c))
+sum(duplicated(rpw11_avgrec$iso3c))
+sum(is.na(remit$iso3c))
+sum(is.na(rpw11_avgrec$iso3c))
+
+# remit[is.na(iso3c),]
+# View(remit)
+
+setkey(remit, iso3c); setkey(rpw11_avgrec, iso3c)
+# rm(temp)
+remit <- merge(remit, rpw11_avgrec, by="iso3c", all.x=TRUE)
+setkey(remit, country, year)
+str(remit)
+
+##        Now calculate fees = cashTRX * destpriceavg
+
+remit[,cashfees := cashTRX * destpriceavg]
+summary(remit$cashfees)
+
+qplot(cashTRX, cashfees, data=remit, label=iso3c, geom="text", log="xy")
+qplot(payXrem, data=remit, stat="bin")
+qplot(cashTRX, data=remit, stat="bin")
+qplot(destpriceavg, data=remit, stat="bin")
+
+
+##        There are 171 missing values for destpriceavg. 
+##        Need to impute some data for the other cases. 
+##        Impute from .... (1) financial access, (2) ATM density, (3) gdp/cap, (4) ppp price level
+summary(remit)
+
+save(remit, file="remittances.Rda")
 
 save.image("remittances.Rdata")
 save.image("archive 20141001.Rdata")
