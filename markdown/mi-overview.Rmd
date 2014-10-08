@@ -23,6 +23,36 @@ Multiple imputation, first described in Rubin (1987), improved regression estima
 2. Model national cash transaction volume.
 3. Model national cash fee, transit and time value from transaction volume.
 
+That (preceding) is the cookbook I followed. It produced these estimtes using Rubin's Rules (1987) for scalar estimates from multiple imputation.
+
+```{r prelims, results='hide', message=FALSE, warning=FALSE}
+setwd("../data")
+require(mi); require(Amelia); require(ggplot2); require(data.table)
+load("cashfees_miviaAmelia01.Rdata")
+
+```
+
+```{r amelia01}
+
+summary(feeshat)
+
+
+```
+
+I was not able to calculate the mean of 12 imputations with Amelia efficiently. Instead it's faster to write to CSV and then summarize by country.
+
+Amelia makes it very easy to give the mean of each variable; but not to collapse imputations to a singe point estimate. That is perhaps the point: if you're modeling something with MI, feed the imputations into your model and then predict the values you want to observe.
+
+So: since we have lots of missing data on cashprices, let's rewrite with a different cookbook.
+
+1. Cash prices as a function of GDPcap, ATMdensity, and active accounts. 
+2. MI of cash prices, model inputs, and covariates rho, nu and X. == MI and model fit stage
+3. Linear combination of rho, nu, X, and cashprice will give you cashfees. == simulate stage
+
+At 3, 
+
+$$ fees = \frac{\nu}{\rho}\hat X_{rem} p_{cash} $$
+
 ### Problem
 
 The algorithm will not converge with variables that are linear multiples of one another. It is brittle to collinear sparse data.
