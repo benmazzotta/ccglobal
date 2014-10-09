@@ -1,0 +1,113 @@
+---
+title: "Cash fees multiple imputation 2"
+author: "Ben Mazzotta"
+date: "Thursday, October 09, 2014"
+output: html_document
+---
+
+Second try to mark down the cash fees data.
+
+## Load the data
+
+```{r prelims, warning=FALSE, echo=FALSE,results='markup', message=FALSE}
+require(ggplot2) ; require(Amelia) ; require(data.table) ; require(Zelig)
+setwd("../data")
+load("working.Rdata")
+# names(node3)
+# summary(node3)
+# tables()
+setnames(node3, "acc_active", "finclactive")
+setnames(node3, "rec_paymt", "finclpay")
+setnames(node3, "rec_wage", "finclwage")
+setnames(node3, "rec_remit", "finclremit")
+setnames(node3, "remit_MM", "remitValue")
+setnames(node3, "remit_TRX", "remitTrx")
+
+cat("Ready for imputation.")
+```
+
+## Multiple imputation
+
+The first step of the imputations is to conduct multiple imputation using as many covariates as possible.
+
+* GDPcap
+* acc_active
+* rec_payment
+* rec_wage
+* remit_TRX
+* cashprice
+* country
+
+
+```{r impute}
+imp01 <- amelia(x=node3, cs="country", id=c("year","iso3c","income","region","lending", "wb3c","payXrem","iso2c"), log=c("gdpcap","pop","remitValue","remitTrx","gdpreal","gdp"), logst=c("finclactive","finclwage","fincpay","finclremit"), empri=1)
+summary(imp01)
+names(imp01)
+```
+
+
+## Fit
+
+Step #2 is to fit the linear model. 
+
+```{r fit_zelig}
+
+mod01 <- zelig(formula="cashprice~gdpcap+finclactive+remitTrx", model="ls", data = imp01)
+mod02 <- zelig(formula="cashprice~gdpcap+finclactive+remitTrx", model="ls", data = node3)
+summary(mod01) ;summary(mod02)
+names(mod01)
+
+```
+
+## Predict
+
+Step #3 is to predict from the linear model. 
+
+```{r sim_zelig, fig.height=4.5, fig.width=8}
+
+##     setx()  command tells Zelig that the input values are the imputed datasets.
+# str(as.matrix(node3[,.SD,.SDcols=c("gdpcap","finclactive","remitTrx")]))
+pred01x <- setx(mod01, fn=NULL)
+
+##    sim() command produces estimates from the five estimates of the linear model.
+pred01 <- sim(mod01, x=pred01x)
+
+##    Regrettably they are stored separately.
+summary(pred01)
+names(pred01[[1]]$result)
+
+##    But you can pull them out one at a time.
+price01<- pred01[[1]]$result$fitted.values
+summary(price01)
+pricehat01 <- imp01$imputations$imp1$cashprice
+summary(pricehat01)
+# priceplot01 <- data.frame(price01, pricehat01)
+# qplot(price01, pricehat01, data=priceplot01, geom="point")
+
+
+price02 <- pred01[[2]]$result$fitted.values
+summary(price02)
+price03 <- pred01[[3]]$result$fitted.values
+summary(price03)
+price04 <- pred01[[4]]$result$fitted.values
+summary(price04)
+price05 <- pred01[[5]]$result$fitted.values
+summary(price05)
+
+##      And append them into a data frame, calculate the mean.
+pricehat <- data.frame(price01, price02, price03, price04, price05)
+pricehat$mu <- rowMeans(pricehat)
+
+##      This tells us a little bit about the estimate.
+boxplot(pricehat$mu, horizontal=TRUE, main="Worldwide cash withdrawal prices \n Boxplot of country estimates")
+summary(pricehat)
+
+```
+
+
+
+$\square$
+
+---
+
+Ben Mazzotta is a postdoc at [IBGC](http://fletcher.tufts.edu/IBGC) and part of the [Cost of Cash](http://fletcher.tufts.edu/CostofCash) team.
