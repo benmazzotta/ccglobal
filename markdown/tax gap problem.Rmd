@@ -1,0 +1,98 @@
+---
+title: "Problem: The Tax Gap"
+author: "Ben Mazzotta"
+date: "Friday, October 24, 2014"
+output: pdf_document
+header-includes:
+  - \usepackage{times}
+  - \usepackage{euler}
+---
+
+## Tax Gap
+
+The tax gap is defined as the difference between the true tax burden of a country and its actual tax revenue. In the United States, a quintennial estimate is released at the IRS website using audit data. The most recent applies to tax year 2006, see [The Tax Gap](http://www.irs.gov/uac/The- Tax-Gap).  Needless to say no comparable international study exists.
+
+## Instructions
+
+1. Collect average effective tax rates for as many countries as possible.
+2. Collect informal economy to GDP ratios for as many countries as possible.
+3. Join the data.
+4. Summarize the availability of data.
+5. Create a scatterplot of informality and average effective tax rates.
+6. Save the joined data in each of the following formats: CSV, DTA, RDA. If you have cloned this repository, make sure to save the data in the `./data` directory
+
+
+```{r demonstrateWDI, width=30}
+##  This is how to pull statistics from World Development Indicators into R.
+##      A similar interface exists for Stata. 
+
+#       Load the library
+require("WDI")
+#       Query variables on taxes
+WDIsearch("Tax revenue")
+#       Jot down the name of the variable
+taxvar <- WDIsearch("Tax revenue")[4][1]  ## Note the subscripts in square brackets
+#       Query for all countries, three recent years
+tax <- WDI(indicator=taxvar, country="all", start=2010, end=2012, extra=TRUE)
+#       Filter for country observations
+tax <- subset(tax, region!="aggregates")
+names(tax)[grep("GC.", names(tax))] <- "tax.gdp"
+
+rm(taxvar)
+summary(tax)
+
+#       Now for informal economy. 
+WDIsearch("informal sector")
+cat("Rats.")
+
+```
+
+Since the World Bank has no readily available measures of employment in the informal sector, here is the ILO website that measures the same.
+
+http://laborsta.ilo.org/informal_economy_E.html
+
+Good instructions on reading data formats are available with Google searches. I recommend bookmarking
+
+* [UCLA pages](http://www.ats.ucla.edu/stat/r/) on learning R
+* [Quick-R](http:statmethods.net)
+* StackExchange
+
+## Merge data in R.
+
+I will give an example readily available in WDI, rather than showing you how to import ILO data here. 
+
+```{r learntomerge, fig.width=10, fig.height=6}
+require(ggplot2)
+
+##      Pull income per capita
+incvar <- WDIsearch("GNI per capita")[2][1]
+inccap <- WDI(incvar, country="all", start=2012, end=2012)
+names(inccap)[grep("NY.", names(inccap))] <- "inccap"
+names(inccap); names(tax)
+
+##      This is the merge command
+df <- merge(inccap, tax, by=c("country","iso2c"))
+names(df)
+
+##      Keep only the useful variables
+df <- df[,c("iso2c","inccap","tax.gdp","region","income","lending","year.y")]
+###     Rename the awkward "year.y"
+names(df)[names(df) %in% "year.y"] <- "year"
+summary(df)
+str(df)
+
+##      Simple plot with the base functions
+plot(df$tax.gdp, df$inccap, log="y")
+
+##      Fancier GGPLOT2 package
+qplot(tax.gdp, inccap, data=subset(df, year==2012), geom="text", label=iso2c, log="y")
+```
+
+## Next steps
+
+After you've done that, consider what you would do about incomplete data. How could you model missing data?
+
+
+---
+
+Ben Mazzotta is a [postdoc](http://fletcher.tufts.edu/costofcash/) at [IBGC](http://fletcher.tufts.edu/ibgc). [Fork me on Github](http://www.github.com/benmazzotta). Check out the CCglobal repository Fletcher.
