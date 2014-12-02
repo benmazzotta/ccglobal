@@ -1,0 +1,53 @@
+---
+output: pdf_document
+header-includes: 
+  - \usepackage{euler}
+  - \usepackage{longtable}
+  - \usepackage{times}
+date: "December 2, 2014"
+author: Ben Mazzotta \thanks{Institute for Business in the Global Context (IBGC), The Fletcher School, Tufts University. 160 Packard Ave, Medford MA 02155.}
+title: Data Sources for Time Use Statistics
+---
+
+## Introduction
+
+Time spent traveling is a large component of household costs related to cash. Receiving cash payments and cashing out electronic payments both require significant and costly travel for individuals. The Global Cost of Cash study models time spent traveling to obtain cash.
+
+## Data sources
+
+The American Time Use Survey describes how much time Americans spend per week on tasks such as work, commuting, shopping, and care of family members. Detailed summary tables are available from the [Bureau of Labor Statistics](http://www.bls.gov/tus/tables.htm). [Microdata is available](http://www.bls.gov/tus/datafiles_2013.htm) from BLS and also to researchers that register with ATUS.
+
+Oxford University has a different serial publication, the [American Heritage Time Use Survey](http://www.timeuse.org/ahtus). [AHTUS data](http://www.timeuse.org/ahtus/data) is available to registered researchers. 
+
+Oxford Centre for Time Use Research has a study for international comparisons, the [Multinational Time Use Survey](http://www.timeuse.org/mtus). Harmonized time use [microdata in are available](http://www.timeuse.org/mtus/access) to registered researchers.
+
+## Desired coverage
+
+Ideally we would have a measure of total individual time spent traveling for shopping and leisure purposes. Cash can be obtained in the workplace; in which case travel is generally a sunk cost from the perspective of cash transactions.
+
+Lacking a complete international dataset, we will use the existing country observations to calibrate a linear model from ATM density per capita and rural access. These are useful approximations since\ldots
+
+1. *Rural access* correlates with time required to reach a commercial center where cash withdrawals and money transfers are available.
+2. *ATM density* correlates inversely with time required to reach a point of access to cash.
+
+## Model
+
+Time use surveys give time spent on travel in a few countries. Our goal is to have an estimate of the time spent per cash transaction per country. That should be positively correlated with total time spent traveling, and negatively correlated with ATM density.
+
+Step 1. Estimate weekly time spent traveling on personal care and financial services, $\theta_w$, from ATM density, $\Delta_{ATM}$, and rural access, $\xi$. Estimate the linear model and predict values for $\hat \theta_w$ in as many countries as possible.
+
+$$
+\theta_w = \beta_0 + \beta_1 \Delta_{ATM} + \beta_2 \xi + \varepsilon
+$$
+
+Step 2. Estimate time per cash transaction, $\theta_i$, from total weekly time spent, $\theta_w$. Here we have only three data points: USA, MEX and IND time spent per cash transaction. It would be preferable to find something in the Global Findex detailing time traveled to point where cash remittances are obtained; but to my knowledge those questions are not part of the survey. Estimate the linear model and predict values for $\hat \theta_i$ in as many countries as possible.
+
+$$
+\theta_i = \gamma_0 + \gamma_1 \theta_w + \varepsilon
+$$
+
+Step 3.  Model time spent on cash transactions, $C_{time}$, as the product of time per transaction, $\theta_i$, wage, $w$, and transaction volume, $X_{cash}$.
+
+$$
+C_{time} = \theta_i w X_{cash}
+$$

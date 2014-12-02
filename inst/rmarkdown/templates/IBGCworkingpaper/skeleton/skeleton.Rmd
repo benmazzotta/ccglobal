@@ -1,0 +1,14 @@
+---
+author: 
+  - name Ben Mazzotta
+    affiliation: Tufts University
+    address: 
+    - 160 Packard Ave
+    - Medford, MA USA
+  email: benjamin.mazzotta@tufts.edu
+output: pdf_document
+preamble:
+  - \usepackage{times}
+  - \usepackage{euler}
+  - \usepackage{longtables}
+---

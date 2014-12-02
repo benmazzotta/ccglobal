@@ -1,0 +1,33 @@
+Country,TravelHouse,TravelOther,Travel,Year
+Australia,23,17,40,2006
+Belgium,16,45,61,2006
+Brazil,12,26,38,2001
+Bulgaria,16,21,37,2002
+Estonia,18,22,40,2000
+Finland,15,36,51,2000
+France,1,32,33,1999
+Germany,21,37,58,2002
+Japan,12,23,35,2006
+Korea,15,23,38,2004
+Italy,15,40,55,2003
+Latvia,21,27,48,2003
+Lithuania,19,24,43,2003
+Netherlands,18,26,44,2000
+Norway,14,35,49,2001
+Poland,18,28,46,2004
+Slovenia,16,29,45,2001
+Spain,11,28,39,2003
+Sweden,19,41,60,2001
+Turkey,..,80,#VALUE!,2006
+United Kingdom,19,30,49,2001
+United States,37,19,56,2003
+,,,,
+,,,,
+,,,,
+,,,,
+Notes,,,,
+Country,English name,,,
+Travel,Minutes per day,,,
+Year,Most recent survey date,,,
+Source,Centre for Time Use Research,,,
+Citation,"Kimberly Fisher and John Robinson. 2010. ""Daily Routines in 22 Countries: Diary Evidence of Average Daily Time Spent in Thirty Activities."" Technical Paper 2010-01. Centre for Time Use Research, University of Oxford, UK.",,,
