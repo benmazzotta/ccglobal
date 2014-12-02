@@ -78,7 +78,7 @@ rm(trxtime)
 
 save.image("working.Rdata")
 
-
+##      #####
 ##      3. National transaction volume
 
 load("remittances.Rda")
@@ -107,3 +107,31 @@ qplot(timespent, timepcap, data=hhtime[Region=="EAP"], log="xy", geom="text", la
 qplot(timespent, timepcap, data=hhtime[Region=="SAR"], log="xy", geom="text", label=iso2c)+labs(title="Time spent on cash transactions\n South Asia", x="Aggregate monthly (millions)",y="Per capita, monthly")
 
 levels(hhtime$Region)
+
+
+##      #####
+##      4. Wages
+
+load("wage average and medians.Rda")
+
+tables()
+
+wage.summary <- wage.summary[,.SD, .SDcols=c("iso2c","wageavg", "wagemed")]
+setkey(wage.summary, iso2c)
+
+hhtime <- wage.summary[hhtime]
+
+attr(hhtime$wageavg, "var.label") <- "Average monthly wage in LCU"
+attr(hhtime$wagemed, "var.label") <- "Median monthly wage in LCU"
+attr(hhtime$Travel, "var.label") <- "Daily time spent on non-work travel per capita (minutes)"
+attr(hhtime$RAI, "var.label") <- "RAI Rural Access Index"
+attr(hhtime$RAInorm, "var.label") <- "Normalized RAI score"
+attr(hhtime$est.day, "var.label") <- "Estimated daily time spent on nonwork travel"
+attr(hhtime$est.ctime, "var.label") <- "Estimated time spent per cash transaction"
+attr(hhtime$iso2c, "var.label") <- "ISO2C standard for two-letter country abbreviations"
+
+save(hhtime, file="household time spent on cash transactions.Rda")
+
+save.image("working.Rdata")
+# save.image("archive 20141202.Rdata")
+
