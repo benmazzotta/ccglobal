@@ -1,0 +1,19 @@
+---
+title: TITLE
+author: Ben Mazzotta \thanks{Institute for Business in the Global Context (IBGC), The Fletcher School, Tufts University}
+date: \today
+logo: FFlag-Tufts.jpg
+output: pdf_document
+header-includes:
+  - \usepackage{euler}
+  - \usepackage{times}
+  - \usepackage{longtable}
+  - \usepackage{lipsum}
+---
+
+
+## Introduction
+
+\lipsum[1]
+
+

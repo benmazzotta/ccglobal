@@ -1,0 +1,64 @@
+---
+title: Discussion of Cash Fees and Transit
+author: Ben Mazzotta \thanks{Institute for Business in the Global Context (IBGC), The Fletcher School, Tufts University. 160 Packard Ave, Medford MA 02155 USA.}
+date: \today
+output: pdf_document
+header-includes:
+  - \usepackage{euler}
+  - \usepackage{times}
+  - \usepackage{longtable}
+  - \usepackage{lipsum}
+---
+
+
+## Introduction
+
+Cash fees and transit are poorly studied. Our approach is to estimate these unobserved quantities by proxy. 
+
+Remittances are studied in the World Bank's data. The bilateral remittance matrix estimates aggregate transaction flows and the prices of standardized remittances, typically in USD 200 and USD 500 amounts. 
+
+Rates of financial inclusion are reported in the World Banks' Global Findex dataset. Many countries report per capita rates of bank account use by the population, either in the last year or the last 30 days:
+
+* Account ownership
+* Account use
+* Payments received
+* Payments sent
+* Debit card owned
+* Debit card used
+* Saving
+
+## Estimate cash fees
+
+Our model of cash fees is as follows. Cash fees, $C_{fees}$, are determined by the rates of payment acceptance, $\nu$, to remittance acceptance, $\rho$; the total number of inbound remittances, $X_R$ and the price of a remittance, $P_R$. 
+
+$$
+C_{fees} = \frac{\nu}{\rho}X_R P_{R}
+$$
+
+Many assumptions are at work here. Due to the general absence of relevant data from reputable sources, proxy data is the best we can hope for. Concerning frequency of payments, ratio of remittance volume to income payment volume is assumed equal to the prevalence of each; suggesting that individuals receive approximately the same number of income payments and remittance payments. This is almost certainly not the case. Estimting in this manner is a significant downward bias in the estimate; perhaps by a multiple of ten or twelve, but unlikely by 20 or 100. 
+
+Concerning the price of cash access, we use the level of remittance prices as a proxy for the level of cash withdrawal prices. This almost certainly overestimates the cost of fees per transaction. Again, the ratio of prices might be off by a factor of ten, but unlikely by twenty or 100.
+
+## Estimate transit costs
+
+IBGC's Consumer Cash Habits in India study evaluated the prevalence and level of transit costs for cash access. All travel costs were recorded in that interview; regardless of whether they were incremental or incidental to obtaining cash. Transit costs, $C_{trans}$, are a simple product of transit cost incidence, $\zeta$, transit fee level, $\nu$, and cash transactions $X_C$. 
+
+$$
+C_{trans} = \zeta \eta X_{Cash}
+$$
+
+
+India is the only market where we have direct observations of transit costs and prices. So we take the transit incidence in India, $\zeta_I$,  and adjust by the ratio $\xi$ that measures rural access relative to India's. The higher is $\xi$, the lower is the share of the population that has access to a road (by the World Bank definition).
+
+$$\xi = \frac{RAI_I}{RAI} $$
+
+
+Similarly we adjust India's measure of transit prices, $\eta_I$, by the ratio of PPP price levels in India to the reporting country, $\pi$. The higher is $\pi$, the lower are prices in the reporting country.
+
+$$\pi = \frac{PPP}{PPP_I} $$
+
+Putting it all together:
+
+$$
+C_{trans} = \left( \zeta_I \xi \right) \left( \eta_I \pi \right) X_{Cash}
+$$

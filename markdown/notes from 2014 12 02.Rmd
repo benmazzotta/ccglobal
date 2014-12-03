@@ -1,0 +1,29 @@
+---
+title: "Notes from 2014 12 02"
+author: "Ben Mazzotta"
+date: "Tuesday, December 02, 2014"
+output: 
+  html_document:
+    theme: "cerulean"
+---
+
+
+## What I did today
+
+I crunched the LCU numbers on household time invested in cash transactions. I included wages. Did not convert to international dollars. ~~ILO files also contain real wages; perhaps should use those instead of "nominal" chosen in today's scripts to facilitate international comparisons.~~ Instead, do conversions at PPP rates using WDI.
+
+### Datasets imported
+
+1. Rural Access Index (RAI) via World Bank
+2. ILO Wage Survey (ILOWS)
+3. ATM Density per capita (WDI)
+4. Multinational Time Use Survey (MTUS)
+5. CCH India, Mexico and USA data (IBGC)
+
+## To do
+
+1. Crunch the numbers on cash transaction fees for the same.
+2. Crunch the numbers on transit costs for the same.
+3. Convert HH costs from LCU to international dollars using PPP exchange rates. 
+
+

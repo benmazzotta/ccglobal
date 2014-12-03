@@ -1,0 +1,29 @@
+---
+title: "Notes from 2014 12 03"
+author: "Ben Mazzotta"
+date: "Wednesday, December 03, 2014"
+output: 
+  html_document:
+    theme: "cerulean"
+---
+
+
+## What I did today
+
+I cleaned the remittance price data from October. Now I have estimates of remittance prices for 117 countries based on World Bank data. The data are summarized by sender and recipient, but averaged across four years of data, cash-out transactions only.
+
+Cleaning the data better gave coverage in 117 countries, up from 42 previously.
+
+With the improved price data, I can estimate national costs of fees.
+
+### Datasets imported
+
+1. Remittance Prices Worldwide (World Bank)
+
+## To do
+
+1. Crunch the numbers on cash transaction fees for the same.
+2. Crunch the numbers on transit costs for the same.
+3. Convert HH costs from LCU to international dollars using PPP exchange rates. 
+
+
