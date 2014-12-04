@@ -1,0 +1,238 @@
+---
+title: Findings on Household Costs
+author: Ben Mazzotta \thanks{Institute for Business in the Global Context (IBGC), The Fletcher School, Tufts University. 160 Packard Ave, Medford MA 02155 USA.}
+date: \today
+logo: FFlag-Tufts.jpg
+output: pdf_document
+linkcolor: blue
+header-includes:
+  - \usepackage{euler}
+  - \usepackage{times}
+  - \usepackage{longtable}
+  - \usepackage{lipsum}
+---
+
+
+## Introduction
+
+Household costs are one of eight components of the IBGC Global Cost of Cash Study. Households pay for cash in three ways: they pay transaction fees on certain types of cash access, such as ATMs and money transfer. They also spend time and money getting to the point where cash is obtained. Using the most relevant available data from reputable international sources and our own survey evidence, we derive estimates of the national cost of cash on an aggregate and a per capita basis for as many countries as possible. 
+
+As our research shows, cash confronts households with many other costs, such as crime, accident, impulse control, budgeting, and social obligations. Those costs are not estimated here.
+```{r prelims, echo=FALSE, message=FALSE}
+require(data.table); require(ggplot2)
+setwd("../data")
+load("household_transit.Rda")
+load("household_costs.Rda")
+
+```
+
+
+## Findings: Transit Costs
+
+National transit costs range from less than a million dollars to more than half a billion. Our data makes it easy to calculate on a national basis, a per capita basis, and to segment by region or by income group.
+
+
+```{r summary, echo=FALSE}
+summary(hhtransit$transcost)
+attr(hhtransit$transcost, "var.label")
+
+# options(digits=3)
+# writeLines("By region:")
+# summary(transcost~Region, data=hhtransit)
+```
+
+Transit costs are estimated in US dollars, making it easy to compare internationally.
+
+```{r boxplots, fig.width=10, fig.height=6, warning=FALSE, echo=FALSE}
+# options(scipen=5, digits=1)
+boxplot(transcost~Region, data=hhtransit, las=1, ylim=c(1,200))
+title(main="National transit costs by region", x="Geography",y="USD Millions")
+
+boxplot(transcost~Region, data=hhtransit, log="y", las=1)
+title(main="National transit costs by region, log scale", x="Geography",y="USD Millions")
+
+qplot(Population, transcost, data=hhtransit, label=iso2c, geom="text")+
+  labs(title="Transit costs v. population", x="Population",y="Transit cost, USD Millions")
+
+qplot(Population, transcost, data=hhtransit, label=iso2c, geom="text", log="xy")+
+  labs(title="Transit costs v. population, log scale", x="Population",y="Transit cost, USD Millions")
+
+
+```
+
+Comparisons within a single region make it easier to think about how individual countries differ from their peers.
+
+```{r drilldown, fig.width=10, fig.height=6, warning=FALSE, echo=FALSE}
+## Regions on a contact sheeet
+qplot(Population, transcost, data=hhtransit, label=iso2c, geom="text", log="xy")+facet_wrap(~Region)+
+  labs(title="Transit costs v. population by region, log scale", x="Population",y="Transit cost, USD Millions")
+
+## Regions stacked vertically
+qplot(Population, transcost, data=hhtransit, label=iso2c, geom="text", log="xy")+facet_grid(.~Region)+
+  labs(title="Transit costs v. population by region, log scale \n (Same data as preceding)", x="Population",y="Transit cost, USD Millions")
+
+```
+
+### League Tables
+
+See accompanying tables for rank orderings of cost. 
+
+* Most and least expensive countries: \nameref{tab:transitTOP} and \nameref{tab:transitBOTTOM}
+* Rankings by region: \nameref{tab:transitAFR}, \nameref{tab:transitEAP}, \nameref{tab:transitECA}, \nameref{tab:transitLAC}, \nameref{tab:transitMENA}, and \nameref{tab:transitSAR}
+
+```{r transitcostdrilldown, results='asis', warning=FALSE, echo=FALSE, message=FALSE}
+options(digits=1)
+require(stargazer)
+setkey(hhtransit, transcost)
+
+## 20 most expensive countries
+setorder(hhtransit, -transcost)
+
+##  {stargazer} is a package that makes pretty tables
+stargazer(head(hhtransit[!is.na(transcost),.SD, .SDcols=c("Country","transcost")], 20), summary=F, title = "National Transit Costs, USD Millions---Most Expensive",label="tab:transitTOP", header=F, digits=0)
+
+
+## 20 least expensive countries
+setorder(hhtransit, transcost)
+stargazer(head(hhtransit[!is.na(transcost),.SD, .SDcols=c("Country","transcost")], 20), summary=F,title = "National Transit Costs, USD Millions---Least Expensive", header=F, label="tab:transitBOTTOM", digits=1)
+
+## By regions: Africa
+setorder(hhtransit, -transcost)
+stargazer(hhtransit[!is.na(transcost) & Region=="AFR", .SD, .SDcols=c("Country","transcost")], summary=F, title="National Transit Costs, USD Million---Africa Region", header=F, digits=1, label="tab:transitAFR")
+
+
+## By regions: Asia
+stargazer(hhtransit[!is.na(transcost) & Region=="EAP", .SD, .SDcols=c("Country","transcost")], summary=F, title="National Transit Costs, USD Million---East Asia Region", header=F, digits=0, label="tab:transitEAP")
+
+## By regions: Eurasia
+stargazer(hhtransit[!is.na(transcost) & Region=="ECA", .SD, .SDcols=c("Country","transcost")], summary=F, title="National Transit Costs, USD Million---European Region", header=F, digits=0, label="tab:transitECA")
+
+## By regions: Latin America
+stargazer(hhtransit[!is.na(transcost) & Region=="LAC", .SD, .SDcols=c("Country","transcost")], summary=F, title="National Transit Costs, USD Million---Latin America Region", header=F, digits=0, label="tab:transitLAC")
+
+## By regions: Middle East
+stargazer(hhtransit[!is.na(transcost) & Region=="MENA", .SD, .SDcols=c("Country","transcost")], summary=F, title="National Transit Costs, USD Million---Middle East Region", header=F, digits=0, label="tab:transitMENA")
+
+## By regions: South Asia
+stargazer(hhtransit[!is.na(transcost) & Region=="SAR", .SD, .SDcols=c("Country","transcost")], summary=F, title="National Transit Costs, USD Million---South Asia Region", header=F, digits=0, label="tab:transitSAR")
+
+```
+
+
+## Findings: Fees
+
+We estimate the cost of fees charged for cash transactions. Again, costs are reported in USD to facilitate international comparisons. 
+
+
+```{r cashfees, fig.width=10, fig.height=6, warning=FALSE, echo=FALSE}
+summary(remit$cashfees)
+setkey(hhtransit, iso2c)
+remitsumm <- hhtransit[,.SD,.SDcols=c("iso2c","Region","Lending","ATMd", "Population")][remit]
+summary(cashfees~Region, data=remitsumm)
+
+qplot(Population, cashfees, data=remitsumm, label=iso2c, geom="text")+
+  labs(title="Cash fees v. population", x="Population",y="Cash fees, USD Millions")
+
+qplot(Population, cashfees, data=remitsumm, label=iso2c, geom="text", log="xy")+
+  labs(title="Cash fees v. population, log scale", x="Population",y="Cash fees, USD Millions")
+
+```
+
+Plots by region facilitate international comparisons among peers. 
+
+
+```{r cashdrilldown, fig.width=10, fig.height=6, warning=FALSE, echo=FALSE}
+## Scatterplot with regional key
+qplot(Population, cashfees, data=remitsumm[!is.na(Region)], geom="point",log="xy", colour=Region)+
+  geom_point(size=5)+scale_colour_brewer(palette="Set1") + 
+  labs(title="Cash fees v. population, log scale", x="Population",y="Cash Fees, USD Millions")
+
+## Regions on a contact sheeet
+qplot(Population, cashfees, data=remitsumm[!is.na(Region)], label=iso2c, geom="text", log="xy")+facet_wrap(~Region)+
+  labs(title="Cash fees v. population by region, log scale", x="Population",y="Cash fees, USD Millions")
+
+## Regions stacked vertically
+qplot(Population, cashfees, data=remitsumm[!is.na(Region)], label=iso2c, geom="text", log="xy")+facet_grid(.~Region)+
+  labs(title="Cash fees v. population by region, log scale \n (Same data as preceding)", x="Population",y="Cash fees, USD Millions")
+
+```
+
+For brevity's sake, here we only include the top and bottom countries; not disaggregated by region. See \nameref{tab:cashfeesTOP} and \nameref{tab:cashfeesBOTTOM}.
+
+```{r cashfeesrank, results='asis', echo=FALSE,warning=FALSE,message=FALSE}
+remitsumm <- remitsumm[!is.na(cashfees)]
+setkey(remitsumm, cashfees)
+
+
+## 20 most expensive countries
+setorder(remitsumm, -cashfees)
+##  {stargazer} is a package that makes pretty tables
+stargazer(head(remitsumm[,.SD, .SDcols=c("country","cashfees")], 20), summary=F, title = "Cash Fees, USD Millions---Most Expensive",label="tab:cashfeesTOP", header=F, digits=0)
+
+
+## 20 least expensive countries
+setorder(remitsumm, cashfees)
+stargazer(head(remitsumm[,.SD, .SDcols=c("country","cashfees")], 20), summary=F, title = "Cash Fees, USD Millions---Least Expensive",label="tab:cashfeesBOTTOM", header=F, digits=0)
+
+```
+
+
+
+## Findings: Time spent
+
+## Data sources
+
+World Development Indicators (WDI) is the World Bank's flagship study of human devleopment. It includes national income and output, population, price levels, foreign exchange rates, infrastructure, and many other demographic variables.
+
+Rural Access Index (RAI) describes the proportion of the rural population with access to roads. It is published by the World Bank occasionally.
+
+Global Findex (WBGF) describes financial access with dozens of indicators related to account ownership, saving behavior, payment behavior. The survey is new; but is intended to be released regularly (perhaps every 2-3 years). Stratification by age, sex, urbanicity, and income quintile faciliates comparisons both within and between countries.
+
+Remittance Prices Worldwide (RPW) and the Bilateral Remittance Matrix (BRM) are World Bank research projects that give insight into money transfer markets. RPW estimates the cost of specific transfer amounts in a variety of corridors (origin and destination countries). BRM estimates the total value of annual remittances between pairs of countries in the dataset.
+
+The Centre for Time Use Research (CTUR) at Oxford University publishes a Multnational Time Use Survey (MTUS) that benchmarks individuals' average time spent traveling for a variety of purposes around the world.
+
+Crucially, the Institute for Business in the Global Context's market research study,  Consumer Cash Habits (CCH), enables us to calibrate the rates at which populations incur costs for access to cash. We can estimate the share of the population that incur specific costs and the levels of those costs in the aggregate, for countries where we have primary data.
+
+## Coverage
+
+Several of the quantities in the dataset are estimated only by proxy. This dataset represents a rigorous and consistent methodology applied to extremely patchy underlying sources. As of December 4, a few large countries lack sufficient data to report consumer cash costs under this methodology: notably Australia, Canada, and Switzerland. The goal is to use widely accepted statistical models to generate plausible estimates for these countries. Virtually none of the quantities estimated in this dataset are directly observed; so constructing comparable data by proxy should neither enhance nor compromise the validity of the findings. Addressing missing data in international comparisons is considered beneficial and appropriate.
+
+## Bibliography
+
+* [Bilateral Remittance Matrix.](http://go.worldbank.org/JITC7NYTT0) (Dataset.) World Bank. 2012. 
+
+* Mazzotta, Benjamin D. and Bhaskar Chakravorti. 2014. [*The Cost of Cash in Mexico.*](http://fletcher.tufts.edu/costofcash/Mexico) Institute for Business in the Global Context, The Fletcher School, Tufts University.
+
+* [Multinational Time Use Study](http://www.timeuse.org/mtus/), Versions World 5.5.3, 5.80 and 6.0 (released October 2012). Created by Jonathan Gershuny and Kimberly Fisher, with Evrim Altintas, Alyssa Borkosky, Anita Bortnik, Donna Dosman, Cara Fedick, Tyler Frederick, Anne H. Gauthier, Sally Jones, Jiweon Jun, Aaron Lai, Qianhan Lin, Tingting Lu, Fiona Lui, Leslie MacRae, Berenice Monna, José Ignacio Giménez Nadal, Monica Pauls, Cori Pawlak, Andrew Shipley, Cecilia Tinonin, Nuno Torres, Charlemaigne Victorino, and Oiching Yeung. Centre for Time Use Research, University of Oxford, United Kingdom.
+
+* Ratha, Dilip, and William Shaw. 2007. [South-South migration and remittances.](http://www.unicef.org/socialpolicy/files/SouthSouthMigrationandRemittances.pdf) No. 102. World Bank Publications.
+
+* [Remittance Prices Worldwide.](http://remittanceprices.worldbank.org/en) (Dataset.) World Bank. 2014. 
+
+* Roberts, Peter, Shyam Kc, and Cordula Rastogi. 2006. ["Rural access index: a key development indicator."](http://hdl.handle.net/10986/17414) Transport Papers 36006. The World Bank Group. 
+
+* [Rural Access Index.](http://data.worldbank.org/data-catalog/rural-access-index) (Dataset.)  World Bank. 2010. 
+
+* World Bank. 2009. Global Remittances Working Group. [Remittance Price Comparison Databases: Official Requirements.](http://remittanceprices.worldbank.org/sites/default/files/StandardsNationalDatabases.pdf)
+ 
+## Software
+
+* Allaire, JJ,  Jonathan McPherson, Yihui Xie, Hadley Wickham, Joe Cheng, and Jeff Allen. 2014. [rmarkdown: Dynamic Documents for R.](http://CRAN.R-project.org/package=rmarkdown) R package version 0.3.3.
+
+* Arel-Bundock, Vincent. 2014. [countrycode: Convert country names and country codes.](http://CRAN.R-project.org/package=countrycode) R package version 0.17. 
+
+* Arel-Bundock, Vincent. 2013. [WDI: World Development Indicators.](http://CRAN.R-project.org/package=WDI) R package version 2.4. 
+
+* Dowle Dowle, T Short, S Lianoglou, A Srinivasan with contributions from R Saporta, E Antonyan. 2014. [data.table: Extension of data.frame.](http://CRAN.R-project.org/package=data.table) R package version 1.9.4. 
+
+* Hlavac, Marek. 2014. [stargazer: LaTeX/HTML code and ASCII text for well-formatted regression and summary statistics tables.](http://CRAN.R-project.org/package=stargazer) R package version 5.1. 
+
+* Wickham, Hadley and Winston Chang. 2014. [ggplot2: An implementation of the Grammar of Graphics.](http://cran.r-project.org/web/packages/ggplot2/index.html) R package version 1.0.
+
+
+## R Session Info
+```{r credits, results='asis', echo=FALSE}
+toLatex(sessionInfo())
+```
+

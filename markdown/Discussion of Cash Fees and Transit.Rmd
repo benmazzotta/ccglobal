@@ -41,24 +41,24 @@ Concerning the price of cash access, we use the level of remittance prices as a 
 
 ## Estimate transit costs
 
-IBGC's Consumer Cash Habits in India study evaluated the prevalence and level of transit costs for cash access. All travel costs were recorded in that interview; regardless of whether they were incremental or incidental to obtaining cash. Transit costs, $C_{trans}$, are a simple product of transit cost incidence, $\zeta$, transit fee level, $\nu$, and cash transactions $X_C$. 
+IBGC's Consumer Cash Habits in Mexico study evaluated the prevalence and level of transit costs for cash access. All travel costs were recorded in that interview; regardless of whether they were incremental or incidental to obtaining cash. Transit costs, $C_{trans}$, are a simple product of transit cost incidence, $\zeta$, transit fee level, $\eta$, and cash transactions $X_C$. 
 
 $$
 C_{trans} = \zeta \eta X_{Cash}
 $$
 
 
-India is the only market where we have direct observations of transit costs and prices. So we take the transit incidence in India, $\zeta_I$,  and adjust by the ratio $\xi$ that measures rural access relative to India's. The higher is $\xi$, the lower is the share of the population that has access to a road (by the World Bank definition).
+Mexico is the only market where we have direct observations of transit costs and prices. So we take the transit incidence in Mexico, $\zeta_M$,  and adjust by the ratio $\xi$ that measures rural access relative to Mexico's. The higher is $\xi$, the lower is the share of the population that has access to a road (by the World Bank definition).
 
-$$\xi = \frac{RAI_I}{RAI} $$
+$$\xi = \frac{RAI_M}{RAI} $$
 
 
-Similarly we adjust India's measure of transit prices, $\eta_I$, by the ratio of PPP price levels in India to the reporting country, $\pi$. The higher is $\pi$, the lower are prices in the reporting country.
+Similarly we adjust Mexico's measure of transit prices, $\eta_M$, by the ratio of PPP price levels in Mexico to the reporting country, $\pi$. The higher is $\pi$, the lower are prices in the reporting country.
 
-$$\pi = \frac{PPP}{PPP_I} $$
+$$\pi = \frac{PPP}{PPP_M} $$
 
 Putting it all together:
 
 $$
-C_{trans} = \left( \zeta_I \xi \right) \left( \eta_I \pi \right) X_{Cash}
+C_{trans} = \left( \zeta_M \xi \right) \left( \eta_M \pi \right) X_{Cash}
 $$
