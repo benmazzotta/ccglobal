@@ -1,6 +1,6 @@
 ---
 title: Findings on Household Costs
-author: Ben Mazzotta \thanks{Institute for Business in the Global Context (IBGC), The Fletcher School, Tufts University. 160 Packard Ave, Medford MA 02155 USA.}
+author: Ben Mazzotta \thanks{Institute for Business in the Global Context, The Fletcher School, Tufts University. 160 Packard Ave, Medford MA 02155 USA.}
 date: \today
 logo: FFlag-Tufts.jpg
 output: pdf_document
