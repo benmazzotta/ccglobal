@@ -1,0 +1,50 @@
+---
+title: Discuss Seigniorage
+author: Ben Mazzotta \thanks{Institute for Business in the Global Context (IBGC), The Fletcher School, Tufts University. 160 Packard Ave, Medford MA 02155 USA.}
+date: \today
+logo: FFlag-Tufts.jpg
+output: pdf_document
+header-includes:
+  - \usepackage{euler}
+  - \usepackage{times}
+  - \usepackage{longtable}
+  - \usepackage{lipsum}
+---
+
+
+## Introduction
+
+Seigniorage is one of the eight components of the global cost of cash study. It relies on estimates of monetary seigniorage and interest carry on currency in circulation. 
+
+## Perspectives on seigniorage
+
+Three concepts of seigniorage are understood. The first is the difference between numismatic value and the production cost of a bank note. If twenty one-dollar bills can be printed for a dollar, the seigniorage value of a bank note would be $0.95.
+
+Monetary seigniorage under fiat currency is determined by the rate of expansion of the monetary base. In autarky, the dilution of existing dollar holders by 1% constitutes a transfer of 1% of their assets to the monetary authority. This perspective on seigniorage neglects important aspects of currency and the money supply. Namely, that the monetary base is largely not held in bank notes. Reserve bank deposits (liablities of the central bank) comprise more of base money than bank notes. Paper bank notes are a poor reflection of the liquidity available to the central bank, to the financial sector, and to the public. When the monetary authority expands or contracts liquidity in the economy, the lion's share of the policy is conducted through intertemporal trades and not through currency in circulation. The Fed buys sovereign debt (and sometimes other assets) to expand the money supply, and sells the same to contract it.
+
+Bank notes are not introduced by helicopter. They are exchanged for deposits, either by the public at a commercial bank or by a commercial bank at the central bank. While it is true that monetary expansion dilutes assets denominated in dollars, it is not clear that expansion of the currency supply correlates with monetary expansion. The channel by which the proceeds of monetary expansion influence soveriegn debt and outlays are circuitous. The Fed buysUST debt. Surplus Fed income on UST securities is remitted to the Treasury, ultimately driving down the cost of borrowing. But none of the following are directly affected by the net worth of the US Treasury: Congressional appropriation of discretionary funds, the statutory borrowing limit of the UST, and UST's legal obligation to remunerate nondiscretionary programs such as debt service and entitlements.
+
+Seigniorage also accrues to the monetary authority via interest carry on its balance sheet. By statute, currency is a liability held against sovereign debt, an asset, on the central bank's balance sheet. UST debt pays the coupon rate on UST debt. Its median maturity is about 5 years, and most of the bonds held are 10 year bonds. Currency pays no interest. So if the long run coupon rate on 10-year debt is 2% and the value of currency in circulation is \$1 trillion, the UST assets on the central banks' balance sheet earn \$20 billion. No interest is paid to currency holders.
+
+What is the right rate to consider for interest carry? Assuming that no paper money existed and that all commercial bank deposits were fully backed by Fed deposits (narrow banking), the entire M1 narrow money supply would earn the Fed funds rate. Since 2008 the Fed Funds rate has been historically low, set by policy at 0.25%. In less deflationary times, the Fed might have a funds rate in the low single digits. Hence the central bank's interest carry could work out to the spread of UST 10-year debt coupon rate above the Funds rate. The interest carry on currency could be further decomposed into a portion accruing to the monetary authority for liquidity issuance, and a second portion that works out to the difference between currency (0%) and the Fed funds rate. 
+
+Monetary issue and currency issue are very different activities, seen in this light. At current, historically low rates, the latter portion (the difference between currency and Fed deposits) works out to just 0.25%, or just a tenth of the 2.4% or so paid as of today on UST 10-year bonds.
+
+> TODO: Lit review on seigniorage
+
+
+## IBGC approach
+
+IBGC estimates seigniorage, $\mathbb{S}_i$, as the interest earnings on central bank balance sheets as of today. We multiply the coupon rate on sovereign 10-year bonds, $i$, by the stock of currency in circulation, $C$. 
+
+$$ \mathbb{S}_i = i C  $$
+
+We do not estimate monetary seigniorage, $\mathbb{S}_m$, or the value of the net change in currency divided by the monetary base, $M0$.
+
+
+$$ \mathbb{S}_m = \Delta C  ~ M0  $$
+
+
+## Data
+
+The International Monetary Fund (IMF) publishes International Financial Statistics (IFS). IFS reports currency in circulation and the montary base, M0, for some 66 countries.
