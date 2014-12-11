@@ -9,6 +9,7 @@ header-includes:
   - \usepackage{times}
   - \usepackage{longtable}
   - \usepackage{lipsum}
+linkcolor: blue
 ---
 
 
@@ -47,4 +48,55 @@ $$ \mathbb{S}_m = \Delta C  ~ M0  $$
 
 ## Data
 
-The International Monetary Fund (IMF) publishes International Financial Statistics (IFS). IFS reports currency in circulation and the montary base, M0, for some 66 countries.
+The International Monetary Fund (IMF) publishes International Financial Statistics (IFS). IFS reports currency in circulation and the montary base, M0, for some 112 countries. The regional breakdown is presented in \nameref{tab:mbasecoverage}.
+
+Euro zone countries and other monetary unions (Caribbean and West Africa) do not report their own currency in circulation or monetary base. They do, however, report M1.
+
+
+```{r mbase, results='asis', warning=FALSE, echo=FALSE}
+require(xtable, quietly=TRUE)
+setwd("../data")
+options(xtable.comment=F)
+load("monetary base and currency in circulation.Rda")
+# str(curr)
+# tabregion <- table(curr$region)
+tabregion <- addmargins(table(curr$region), 1)
+tabregion <- as.data.frame(tabregion)
+setnames(tabregion, c("Var1","Freq"), c("Region","M0 observed"))
+# tabregion
+print(xtable(tabregion, caption="IFS Regional Coverage", label="tab:mbasecoverage",digits=0), include.rownames=FALSE, hline.after=c(-1, 0,nrow(tabregion)-1, nrow(tabregion)))
+# rm(tabregion)
+```
+
+
+
+
+Interest rate data is also published by IMF. Long-run interest rates on government debt are only available for 66 countries. Coverage is detailed in Tables \ref{tab:ifseither} and \ref{tab:ifsboth}.
+
+```{r prepareinterest, echo=F, results='hide'}
+load("../data/IFS interest rates data.Rda")
+ifs[,region:=countrycode(Country, origin="country.name", destination="region")]
+
+```
+
+
+```{r igov, echo=FALSE, results='asis'}
+tabregion <- cbind(tabregion, addmargins(ifs[,table(region)],1))[c(1,2,4)]
+# tabregion <- as.data.frame(tabregion)
+# setnames(tabregion, c("region","Freq"), c("Region","Number of countries"))
+setnames(tabregion, "Freq", "Interest observed")
+print(xtable(tabregion, digits=0, caption="IFS coverage by region, either M0 or interest rates", label="tab:ifseither"), include.rownames=F)
+
+# str(ifs)
+setkey(curr, Country)
+# tables()
+# tabint <- addmargins(table(ifs$))
+seign <- ifs[,.SD,.SDcols=c("Country","int.gov")][J(curr)]
+
+tabregion <- addmargins(seign[!is.na(int.gov), table(region)], 1)
+tabregion <- as.data.frame(tabregion)
+setnames(tabregion, c("region","Freq"), c("Region","Number of countries"))
+print(xtable(tabregion, digits=0, caption="IFS coverage by region, both M0 and interest rates", label="tab:ifsboth"))
+
+```
+
