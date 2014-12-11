@@ -9,6 +9,7 @@ header-includes:
   - \usepackage{times}
   - \usepackage{longtable}
   - \usepackage{lipsum}
+linkcolor: blue
 ---
 
 
@@ -20,9 +21,13 @@ Seigniorage is one of the eight components of the global cost of cash study. It 
 
 Three concepts of seigniorage are understood. The first is the difference between numismatic value and the production cost of a bank note. If twenty one-dollar bills can be printed for a dollar, the seigniorage value of a bank note would be $0.95.
 
+##### Monetary seigniorage
+
 Monetary seigniorage under fiat currency is determined by the rate of expansion of the monetary base. In autarky, the dilution of existing dollar holders by 1% constitutes a transfer of 1% of their assets to the monetary authority. This perspective on seigniorage neglects important aspects of currency and the money supply. Namely, that the monetary base is largely not held in bank notes. Reserve bank deposits (liablities of the central bank) comprise more of base money than bank notes. Paper bank notes are a poor reflection of the liquidity available to the central bank, to the financial sector, and to the public. When the monetary authority expands or contracts liquidity in the economy, the lion's share of the policy is conducted through intertemporal trades and not through currency in circulation. The Fed buys sovereign debt (and sometimes other assets) to expand the money supply, and sells the same to contract it.
 
 Bank notes are not introduced by helicopter. They are exchanged for deposits, either by the public at a commercial bank or by a commercial bank at the central bank. While it is true that monetary expansion dilutes assets denominated in dollars, it is not clear that expansion of the currency supply correlates with monetary expansion. The channel by which the proceeds of monetary expansion influence soveriegn debt and outlays are circuitous. The Fed buysUST debt. Surplus Fed income on UST securities is remitted to the Treasury, ultimately driving down the cost of borrowing. But none of the following are directly affected by the net worth of the US Treasury: Congressional appropriation of discretionary funds, the statutory borrowing limit of the UST, and UST's legal obligation to remunerate nondiscretionary programs such as debt service and entitlements.
+
+##### Interest accrued
 
 Seigniorage also accrues to the monetary authority via interest carry on its balance sheet. By statute, currency is a liability held against sovereign debt, an asset, on the central bank's balance sheet. UST debt pays the coupon rate on UST debt. Its median maturity is about 5 years, and most of the bonds held are 10 year bonds. Currency pays no interest. So if the long run coupon rate on 10-year debt is 2% and the value of currency in circulation is \$1 trillion, the UST assets on the central banks' balance sheet earn \$20 billion. No interest is paid to currency holders.
 
@@ -47,4 +52,55 @@ $$ \mathbb{S}_m = \Delta C  ~ M0  $$
 
 ## Data
 
-The International Monetary Fund (IMF) publishes International Financial Statistics (IFS). IFS reports currency in circulation and the montary base, M0, for some 66 countries.
+The International Monetary Fund (IMF) publishes International Financial Statistics (IFS). IFS reports currency in circulation and the montary base, M0, for some 112 countries. The regional breakdown is presented in \nameref{tab:mbasecoverage}.
+
+Euro zone countries and other monetary unions (Caribbean and West Africa) do not report their own currency in circulation or monetary base. They do, however, report M1.
+
+
+```{r mbase, results='asis', warning=FALSE, echo=FALSE}
+require(xtable, quietly=TRUE)
+setwd("../data")
+options(xtable.comment=F)
+load("monetary base and currency in circulation.Rda")
+# str(curr)
+# tabregion <- table(curr$region)
+tabregion <- addmargins(table(curr$region), 1)
+tabregion <- as.data.frame(tabregion)
+setnames(tabregion, c("Var1","Freq"), c("Region","M0 observed"))
+# tabregion
+print(xtable(tabregion, caption="IFS Regional Coverage", label="tab:mbasecoverage",digits=0), include.rownames=FALSE, hline.after=c(-1, 0,nrow(tabregion)-1, nrow(tabregion)))
+# rm(tabregion)
+```
+
+
+
+
+Interest rate data is also published by IMF. Long-run interest rates on government debt are only available for 66 countries. Coverage is detailed in Tables \ref{tab:ifseither} and \ref{tab:ifsboth}.
+
+```{r prepareinterest, echo=F, results='hide'}
+load("../data/IFS interest rates data.Rda")
+ifs[,region:=countrycode(Country, origin="country.name", destination="region")]
+
+```
+
+
+```{r igov, echo=FALSE, results='asis'}
+tabregion <- cbind(tabregion, addmargins(ifs[,table(region)],1))[c(1,2,4)]
+# tabregion <- as.data.frame(tabregion)
+# setnames(tabregion, c("region","Freq"), c("Region","Number of countries"))
+setnames(tabregion, "Freq", "Interest observed")
+print(xtable(tabregion, digits=0, caption="IFS coverage by region, either M0 or interest rates", label="tab:ifseither"), include.rownames=F)
+
+# str(ifs)
+setkey(curr, Country)
+# tables()
+# tabint <- addmargins(table(ifs$))
+seign <- ifs[,.SD,.SDcols=c("Country","int.gov")][J(curr)]
+
+tabregion <- addmargins(seign[!is.na(int.gov), table(region)], 1)
+tabregion <- as.data.frame(tabregion)
+setnames(tabregion, c("region","Freq"), c("Region","Number of countries"))
+print(xtable(tabregion, digits=0, caption="IFS coverage by region, both M0 and interest rates", label="tab:ifsboth"))
+
+```
+

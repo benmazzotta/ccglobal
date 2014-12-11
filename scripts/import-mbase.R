@@ -31,10 +31,26 @@ str(curr)
 
 setkey(curr, Country)
 ##          Keep only first mention of each country.
-curr1 <- curr[,.SD, .SDcols=c("Country","mbase","currcirc")][unique(curr[,"Country",with=F]), mult="first"]
-str(curr1)
+curr <- curr[currcirc>0,.SD, .SDcols=c("Country","mbase","currcirc")][unique(curr[,"Country",with=F]), mult="first"]
+str(curr); summary(curr)
 
-curr1 <- curr1[mbase>0]
+curr[is.na(mbase)]
 
-str(curr1); summary(curr1)
+##          Add regional information with countrycode
+require(countrycode)
+curr[,iso2c:=countrycode(Country, origin="country.name", destination="iso2c")]
+curr[,region:=countrycode(Country, origin="country.name", destination="region")]
+summary(curr)
 
+##          Stopped here
+##          At present we have all the countries with monetary base and currency in circulatoin
+##          To Do: label variables
+##          To Do: check for sensible values
+##          To Do: find out why some values are zero
+##          To Do: check for duplicates
+##          To Do: Add iso2c codes
+
+table(curr$region)
+
+# save.image("archive 2014 12 10.Rdata")
+save(curr, file="monetary base and currency in circulation.Rda")
