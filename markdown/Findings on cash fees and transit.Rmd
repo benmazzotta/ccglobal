@@ -10,6 +10,7 @@ header-includes:
   - \usepackage{times}
   - \usepackage{longtable}
   - \usepackage{lipsum}
+  - \usepackage{caption}
 ---
 
 
@@ -18,8 +19,8 @@ header-includes:
 Household costs are one of eight components of the IBGC Global Cost of Cash Study. Households pay for cash in three ways: they pay transaction fees on certain types of cash access, such as ATMs and money transfer. They also spend time and money getting to the point where cash is obtained. Using the most relevant available data from reputable international sources and our own survey evidence, we derive estimates of the national cost of cash on an aggregate and a per capita basis for as many countries as possible. 
 
 As our research shows, cash confronts households with many other costs, such as crime, accident, impulse control, budgeting, and social obligations. Those costs are not estimated here.
-```{r prelims, echo=FALSE, message=FALSE}
-require(data.table); require(ggplot2)
+```{r prelims, echo=FALSE, message=FALSE, warning=F}
+require(data.table); require(ggplot2); require(xtable)
 setwd("../data")
 load("household_transit.Rda")
 load("household_costs.Rda")
@@ -27,21 +28,30 @@ load("household_costs.Rda")
 ```
 
 
+Three channels of consumer cost are estimated below: transit costs related to cash access, time spent on cash access, and fees paid for access to cash. The cost of transit is the aggregate national cost that consumers pay in order to reach the point of cash access, regardless of whether that trip was a single- or multi-purpose trip. The time spent on cash access is the aggregate national cost of time spent to reach the point of cash access. Our calibration dataset does not record queue time in a systematic manner, so time spent in queues for cash access is ignored in this measure. Queue times can vary very widely based on geography, type of cash access point, and social context. Finally, fees paid for cash access are the transaction fees paid for access to cash, such as fees due for check cashing and ATM access.\footnote{Reviewers have pointed out that our survey methodology may have included borrowing fees as well as withdrawal and cash conversion fees in Mexico and India; but we are unaware of any better datasets on the price of cash access, and have chosen to use our own research.}
+
 ## Findings: Transit Costs
 
-National transit costs range from less than a million dollars to more than half a billion. Our data makes it easy to calculate on a national basis, a per capita basis, and to segment by region or by income group.
+In a household with a breadwinner and a homemaker, the breadwinner will most often obtain cash outside the home. Depending on the country and occupation, the breadwinner may obtain cash through a bank, a bank machine, a salary office, a place of business, or any number of nonbank financial institutions. Depending on the country and context, the last category can include bank correspondents, money transfer operators, check cashing stores, and informal financial service providers. The cost consumers pay to reach any of these cash access points depends on many things: how far away the cash access points are, the quality of infrastructure, and the mode of transit used to reach a point of cash access.
+
+Survey evidence on this topic is rare. We built a simple model of national transportation infrastructure and access from reputable international sources. We then calibrated that model using original survey evidence from Mexico. The estimates presented below are the predictions of that calibrated model for national aggregate costs of transit related to cash access.
 
 
-```{r summary, echo=FALSE}
-summary(hhtransit$transcost)
-attr(hhtransit$transcost, "var.label")
+
+National transit costs range from less than a million dollars to more than half a billion. 118 countries in our sample have model estimates for transit cost. Our data makes it easy to calculate on a national basis, a per capita basis, and to segment by region or by income group. Transit costs are estimated in US dollars, to facilitate international comparisons. The distribution of transit costs is summarized at Table \ref{tab:summtransit}.
+
+
+```{r summary, echo=FALSE, results= "asis", comment="", tidy=T}
+# cat("The national aggregate cost of consumer transit to reach cash access points \n is summarized here: \n")
+tab1 <- as.matrix(summary(hhtransit$transcost)); colnames(tab1) <- c("Value (USD, millions)")
+print(xtable(as.matrix(tab1, colNames=c("Quantile","Value (USD, millions)")), caption="Summary of national household transit costs", digits=0, label="tab:summtransit"), comment=F, caption.placement="top")
+# attr(hhtransit$transcost, "var.label")
 
 # options(digits=3)
 # writeLines("By region:")
 # summary(transcost~Region, data=hhtransit)
 ```
 
-Transit costs are estimated in US dollars, making it easy to compare internationally.
 
 ```{r boxplots, fig.width=10, fig.height=6, warning=FALSE, echo=FALSE}
 # options(scipen=5, digits=1)
@@ -60,7 +70,7 @@ qplot(Population, transcost, data=hhtransit, label=iso2c, geom="text", log="xy")
 
 ```
 
-Comparisons within a single region make it easier to think about how individual countries differ from their peers.
+In two-way scatterplots with national population, the highest costs per capita are in the upper left corner. The lowest costs per capita are in the lower right corner. The largest markets by headcount are farthest right. The largest markets by aggregate cost are at the top of the chart. Intraregional comparisons make it easier to see how individual countries differ from their peers.
 
 ```{r drilldown, fig.width=10, fig.height=6, warning=FALSE, echo=FALSE}
 ## Regions on a contact sheeet
@@ -121,14 +131,19 @@ stargazer(hhtransit[!is.na(transcost) & Region=="SAR", .SD, .SDcols=c("Country",
 
 ## Findings: Fees
 
-We estimate the cost of fees charged for cash transactions. Again, costs are reported in USD to facilitate international comparisons. 
+We estimate the cost of fees charged for cash transactions. Data regarding fees paid for cash access is exceedingly rare. Most often, survey evidence focuses on a particular channel of cash access, rather than all fees paid by consumers across different channels. Our study built a model of cash access transactions and the rates at which fees are charged on those transcations. The model was calibrated to original survey evidence in Mexico, India and the United States. 
+
+Table \ref{tab:summcashfees} summarizes the distribution of national consumer cash access fees. Again, costs are reported in USD to facilitate international comparisons. Two-way scatterplots with population show where per capita costs are highest (upper left) and lowest (lower right).
 
 
-```{r cashfees, fig.width=10, fig.height=6, warning=FALSE, echo=FALSE}
-summary(remit$cashfees)
+```{r cashfees, fig.width=10, fig.height=6, warning=FALSE, echo=FALSE, results="asis"}
+require(doBy)
+tab2 <- as.matrix(summary(remit$cashfees)); colnames(tab2) <- "Value (USD, millions)"
+print(xtable(tab2, digits=0, caption="National aggregate cost of cash transaction fees", label="tab:summcashfees"), comment=F, xtable.caption.placement="top", caption.placement="top")
 setkey(hhtransit, iso2c)
 remitsumm <- hhtransit[,.SD,.SDcols=c("iso2c","Region","Lending","ATMd", "Population")][remit]
-summary(cashfees~Region, data=remitsumm)
+tab3 <- summaryBy(cashfees~Region, na.rm=T, remitsumm); colnames(tab3) <- c("Region","Average (USD, millions)")
+print(xtable(tab3, digits=0, caption="National cost of cash transaction fees, by region", label="tab:cashfeesbyregion"), comment=F, caption.placement="top")
 
 qplot(Population, cashfees, data=remitsumm, label=iso2c, geom="text")+
   labs(title="Cash fees v. population", x="Population",y="Cash fees, USD Millions")

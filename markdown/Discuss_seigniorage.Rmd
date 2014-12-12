@@ -104,3 +104,18 @@ print(xtable(tabregion, digits=0, caption="IFS coverage by region, both M0 and i
 
 ```
 
+Independently, Bloomberg reports on government debt yields. We obtained government bond yields as close as possible to ten-year maturity for the 70 largest economies in the world (by GDP). Those data will be summarized by Monday December 15.
+
+## Euro Zone 
+
+The European Central Bank (ECB) reports currency in circulation as a liability of the ECB and not national central banks. Furthermore it distributes net earned interest to national central banks according to their share of paid up capital. 
+
+IBGC's approach is to estimate the share of gross interest income on the ECB's income statement attributable to its stock of currency in circulation. If the stock of sovereign bonds exceeds the currency in circulation, then we estimate $\rho$, the share of the sovereign debt portfolio that is required to balance the currency liability on its balance sheet. The value of seigniorage, $\mathbb{S}_i$ to member countries is the product of that fraction, $\rho$, times the gross interest income from sovereign debt, $I_G$, on the ECB balance sheet is the value of seigniorage to member countries.
+
+$$ \mathbb{S}_i = \rho I_G $$ 
+
+The share of paid up capital in the ECB is not directly linked to member countries' production quotas for bank note production in the euro zone. Production quotas themselves are not indicative of to the stock of currency thought to circulate in member countries, because of persistent net international flows of banknotes. These flows reflect trade, investment, migration and tourism. 
+
+##### Data sources
+
+ECB publishes annual income statements and balance sheets. Members' share of paid up capital is available annually or better.
