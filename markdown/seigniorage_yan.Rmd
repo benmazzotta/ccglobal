@@ -1,0 +1,56 @@
+---
+title: "Yan Bai Seigniorage v6"
+author: Ben Mazzotta \thanks{Institute for Business in the Global Context, The Fletcher School, Tufts University. 160 Packard Ave, Medford MA 02155 USA.}
+date: "Monday, December 15, 2014"
+output: pdf_document
+linkcolor: blue
+header-includes:
+  - \usepackage{euler}
+  - \usepackage{times}
+  - \usepackage{longtable}
+  - \usepackage{lipsum}
+
+---
+
+## Introduction
+
+Yan calculated the interest earnings of major central banks on the assets that back currency liabilities, $\mathbb{S}_i$.
+
+$$ \mathbb{S}_i = i C $$ 
+
+\ldots where $i$ is the interest rate on sovereign assets earned by the central bank, and $C$ is the currency liability of the central bank. By statute central banks hold sovereign debt assets against the currency liability. The currency liability has zero nominal return, but the sovereign debt has a positive return.
+
+
+
+```{r prelims, results='hide', echo=F, warning=F, message=FALSE}
+load("../data/seigniorage_bai.Rda")
+require(data.table); require(ggplot2); require(xtable); require(stargazer)
+summary(bai)
+bai[,region:= countrycode(iso2c, origin="iso2c", destination="region")]
+```
+
+```{r prelims2, results='asis', echo=F, warning=FALSE}
+stargazer(bai,header=F, title="Summary of Yan Bai's data.", digits=1)
+```
+ 
+Regions are represented as described in Table \ref{tab:regsumm}.
+
+```{r regionalcoverage, results="asis", comment="", echo=FALSE}
+t1 <- as.data.table(table(bai$region))
+t2 <- as.data.table(table(bai[!is.na(seign2), region]))
+
+setkey(t1, V1); setkey(t2, V1)
+joint.freq <- t2[t1]
+setnames(joint.freq, c("V1", "N", "i.N"), c("Region","Seigniorage observed","Incomplete"))
+
+stargazer(joint.freq, title="Regions covered in the seigniorage dataset", header=F, summary = FALSE, rownames=F, colnames=T, label="tab:regsumm")
+
+```
+
+## Data sources
+
+* to do 
+
+## Bibliography
+
+* to do
