@@ -11,6 +11,7 @@ header-includes:
   - \usepackage{longtable}
   - \usepackage{lipsum}
   - \usepackage{caption}
+  
 ---
 
 
@@ -195,9 +196,82 @@ stargazer(head(remitsumm[,.SD, .SDcols=c("country","cashfees")], 20), summary=F,
 
 ## Findings: Time spent
 
+Consumers spend a great deal of time getting to and from the place where cash is obtained. We estimate the aggregate time on a national scale. Again, due to the dearth of observational data on when and how consumers obtain cash, we work backwards from some larger studies in order to model how much time consumers spend traveling for cash. Our study built a model of time required to obtain cash, based on the number of transactions and time spent per transaction. That model was calibrated to IBGC survey data in three countries, and then extrapolated to a large number of countries. The inputs to the model include aggregate time spent traveling for nonwork purposes per week, the density of ATMs per capita, and the fraction of the rural population with access to roads. The highest costs per capita occur in markets where travel is slow, financial infrastructure is scarce and access to roads is poor.
+
+
+The number of transactions per month, as described above, refers to the number of times the individual is thought to receive cash payments. Ideally a good measure of time invested would also include time spent in queues for salary offices, ATM withdrawals, and in-person payments that could be processed more quickly by SMS or electronic payment.  We do not have good measures of all of those processes, and still less how much individual time might vary internationally for those processses.
+
+One particularly important category of data we were not able to capture with our study methodology is *payday absenteeism*. It is common practice in some developing countries for salaried staff to be absent for hours or days when salaries are paid. When salaries are paid by bank transfer, workers sometimes need to visit the bank or ATM to withdraw cash. Cash withdrawals by teller must occur during banks' business hours. Where ATMs are prone to run out of cash, workers must queue to obtain cash as soon as funds post to the account.
+
+
+
+```{r timespent, results='asis', warning=FALSE, comment="", echo=F}
+load("../data/household_time.Rda")
+## summary(hhtime)
+timesumm <- hhtime[!is.na(timespent), ]
+setkey(timesumm, timespent)
+tab05 <- head(timesumm[,.SD, .SDcols=c("Country","timespent","timepcap")], 20)
+setnames(tab05, c("timespent", "timepcap"), c("Aggregate time", "Per capita time"))
+tab05notes <- list(); tab05notes$pos <- list(0) ; tab05notes$command <- c("& \\emph{Millions of hours} & \\emph{Hours}  \\\\ ")
+
+# tab05notes <- list(); tab05notes$pos <- list(nrow(tab05), nrow(tab05)) ; tab05notes$command <- c("\\multicolumn{3}{l}{ \\emph {Aggregate time is in millions of hours per month.} } \\\\ ","\\multicolumn{3}{l}{ \\emph {Per capita time is in hours per month.} } \\\\ ")
+# tab05notes
+
+print.xtable(xtable(tab05, caption = "Top 20 countries, least time spent per month on cash transactions"), add.to.row=tab05notes, include.rownames=FALSE, comment = FALSE)
+
+
+setorder(timesumm, -timespent)
+tab06 <- head(timesumm[,.SD, .SDcols=c("Country","timespent","timepcap")], 20)
+setnames(tab06,c("timespent","timepcap"), c("Aggregate time","Time per capita"))
+tab06notes <- list(); tab06notes$pos <- list(0) ; tab06notes$command <- c("& \\emph{Millions of hours} & \\emph{Hours}  \\\\ ")
+print.xtable(xtable(tab06, caption = "Top 20 countries, most time spent per month on cash transactions"), add.to.row=tab06notes, include.rownames=FALSE, comment = FALSE)
+
+
+setorder(timesumm, -timepcap)
+tab07 <- head(timesumm[,.SD, .SDcols=c("Country","timespent","timepcap")], 20)
+setnames(tab07,c("timespent","timepcap"), c("Aggregate time","Time per capita"))
+tab07notes <- list(); tab07notes$pos <- list(0) ; tab07notes$command <- c("& \\emph{Millions of hours} & \\emph{Hours}  \\\\ ")
+print.xtable(xtable(tab07, caption = "Top 20 countries, most time spent per capita on cash transactions"), add.to.row=tab07notes, include.rownames=FALSE, comment = FALSE)
+
+
+tab08 <- head(timesumm[Region=="AFR",.SD, .SDcols=c("Country","timespent","timepcap")], 20)
+setnames(tab08,c("timespent","timepcap"), c("Aggregate time","Time per capita"))
+tab08notes <- list(); tab08notes$pos <- list(0) ; tab08notes$command <- c("& \\emph{Millions of hours} & \\emph{Hours}  \\\\ ")
+print.xtable(xtable(tab08, caption = "Top countries in Africa, most time spent per capita on cash transactions"), add.to.row=tab08notes, include.rownames=FALSE, comment = FALSE)
+
+tab09 <- head(timesumm[Region=="EAP",.SD, .SDcols=c("Country","timespent","timepcap")], 20)
+setnames(tab09,c("timespent","timepcap"), c("Aggregate time","Time per capita"))
+tab09notes <- list(); tab09notes$pos <- list(0) ; tab09notes$command <- c("& \\emph{Millions of hours} & \\emph{Hours}  \\\\ ")
+print.xtable(xtable(tab09, caption = "Top countries in East Asia, most time spent per capita on cash transactions"), add.to.row=tab09notes, include.rownames=FALSE, comment = FALSE)
+
+tab10 <- head(timesumm[Region=="ECA",.SD, .SDcols=c("Country","timespent","timepcap")], 20)
+setnames(tab10,c("timespent","timepcap"), c("Aggregate time","Time per capita"))
+tab10notes <- list(); tab10notes$pos <- list(0) ; tab10notes$command <- c("& \\emph{Millions of hours} & \\emph{Hours}  \\\\ ")
+print.xtable(xtable(tab10, caption = "Top countries in Eurasia, most time spent per capita on cash transactions"), add.to.row=tab10notes, include.rownames=FALSE, comment = FALSE)
+
+tab11 <- head(timesumm[Region=="LAC",.SD, .SDcols=c("Country","timespent","timepcap")], 20)
+setnames(tab11,c("timespent","timepcap"), c("Aggregate time","Time per capita"))
+tab11notes <- list(); tab11notes$pos <- list(0) ; tab11notes$command <- c("& \\emph{Millions of hours} & \\emph{Hours}  \\\\ ")
+print.xtable(xtable(tab11, caption = "Top countries in Latin America, most time spent per capita on cash transactions"), add.to.row=tab11notes, include.rownames=FALSE, comment = FALSE)
+
+tab12 <- head(timesumm[Region=="MENA",.SD, .SDcols=c("Country","timespent","timepcap")], 20)
+setnames(tab12,c("timespent","timepcap"), c("Aggregate time","Time per capita"))
+tab12notes <- list(); tab12notes$pos <- list(0) ; tab12notes$command <- c("& \\emph{Millions of hours} & \\emph{Hours}  \\\\ ")
+print.xtable(xtable(tab12, caption = "Top countries in the Middle East, most time spent per capita on cash transactions"), add.to.row=tab12notes, include.rownames=FALSE, comment = FALSE)
+
+
+tab13 <- head(timesumm[Region=="SAR",.SD, .SDcols=c("Country","timespent","timepcap")], 20)
+setnames(tab13,c("timespent","timepcap"), c("Aggregate time","Time per capita"))
+tab13notes <- list(); tab13notes$pos <- list(0) ; tab13notes$command <- c("& \\emph{Millions of hours} & \\emph{Hours}  \\\\ ")
+print.xtable(xtable(tab13, caption = "Top countries in the South Asia, most time spent per capita on cash transactions"), add.to.row=tab13notes, include.rownames=FALSE, comment = FALSE)
+
+
+```
+
+
 ## Data sources
 
-World Development Indicators (WDI) is the World Bank's flagship study of human devleopment. It includes national income and output, population, price levels, foreign exchange rates, infrastructure, and many other demographic variables.
+World Development Indicators (WDI) is the World Bank's flagship study of human development. It includes national income and output, population, price levels, foreign exchange rates, infrastructure, and many other demographic variables.
 
 Rural Access Index (RAI) describes the proportion of the rural population with access to roads. It is published by the World Bank occasionally.
 
