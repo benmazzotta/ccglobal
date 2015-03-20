@@ -1,0 +1,56 @@
+---
+title: "Cash hoards vs capital investment"
+author: "Ben Mazzotta and Yan Bai"
+date: "Friday, February 27, 2015"
+output: html_document
+---
+
+## Cash hoards
+
+By definition, a hoard of cash is not available to invest.
+
+The consequence of cash hoards is slower growth under the Solow Growth Model. 
+
+This paper suggests the size of cash hoards.
+
+## Data sources
+
+The World Bank has three potentially relevant measures
+
+1. Gross capital formation
+2. Credit to the private sector
+3. M2
+
+Cash hoards are a shortfall of saving in the private sector. Elsewhere, we have calculated the share of national saving that goes missing as a result of financial exclusion. That number is expressed as a two-digit percentage of personal saving. 
+
+Personal saving is just one component of saving available for investment. Particularly in small, open economies with large state sectors, government and foreign saving are also important sources of investment in the private sector.
+
+We show below that the shortfall in saving  rate, $s_h$, leads to a linear drop in the rate of output growth, $d \log Y$, related by the familiar parameter $\alpha$ from the Cobb-Douglas production function, that also determines the marginal product of capital. 
+
+
+```{r prelims, warning=FALSE, eval=FALSE, echo=FALSE}
+require("WDI")
+
+```
+
+```{r queryworldbank}
+## Query the World Bank API for **Gross Capital Formation as a % of GDP** 
+var.grossk <- WDIsearch("gross capital formation")[[10]]
+
+## Query the World Bank API for **Gross Capital Formation as a % of GDP** 
+var.creditp <- WDIsearch("private sector")[[86]]
+
+
+
+## Create a datset with the variables above
+hoarding <- data.table(WDI(indicator=c(var.grossk, var.creditp), extra=T), key="iso2c")
+setnames(hoarding, var.grossk, "grosscap")
+setnames(hoarding, var.creditp, "privatecredit")
+hoarding <- hoarding[income!="Aggregates"]
+str(hoarding)
+
+```
+
+
+> End of document
+---
