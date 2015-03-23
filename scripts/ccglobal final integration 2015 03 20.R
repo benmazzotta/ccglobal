@@ -59,4 +59,70 @@ rm(ATMcost)
 
 load("Cash in transit.Rda")
 
-##### Interrupted here 2015 03 20 #####
+tables()
+setnames(costofcash, "Country.Code", "iso3c")
+
+
+##      Change the ISO3C labels to character variables
+cashintransit[, iso3c:=as.character(iso3c)]
+cashintransit[, iso2c:=as.character(iso2c)]
+
+costofcash[, iso3c:=as.character(iso3c)]
+
+cashintransit[, country:=as.character(country)]
+costofcash[, Country.Name:=as.character(Country.Name)]
+
+
+##      Sort
+setkey(cashintransit, iso3c)
+setkey(costofcash, iso3c)
+
+##      Merge
+costofcash <- cashintransit[, .SD, .SDcols=c("country","iso2c","iso3c","year","pricelevel","gdp","region","income","banks","CIT_hat","CITest")][J(costofcash)]
+
+str(costofcash)
+summary(costofcash)
+
+mergefail.1.countries <- costofcash[is.na(country),Country.Name]
+## Missing countries: Argentina, Burkina, Bahrain, Cabo Verde, Euro area, Myanmar, Niger, Senegal, San Marino, Syria, Togo
+
+##    Since this is empty....
+##      None of the countries in mergefail.1.countries appear in both data.tables
+##      All are truly missing from either ATM or CIT costs
+# costofcash[country %in% mergefail.1.countries, .SD, .SDcols=c("i2o3c","gdp")]
+
+## Wrap up and move to the next section
+rm(cashintransit)
+save.image("working.Rdata")
+
+
+# #####
+# 1. (C) Household costs: fees, time and transit
+
+load("household_costs.Rda")
+
+setkey(remit, iso3c)
+tables()
+
+##      Specify variables to keep from household costs
+remit.keepvars <- c("iso3c","cashTRX","cashfees","remit_MM","remit_TRX","payXrem","transUSD", "iso2c")
+
+##      Merge
+costofcash <- remit[, .SD, .SDcols=remit.keepvars][J(costofcash)]
+
+rm(remit.keepvars)
+
+load("household_time.Rda")
+
+##      Specify variables to keep from household time spent
+hhtime.keepvars <- c("iso2c","timespent","timepcap")
+##      Merge
+setkey(hhtime, iso2c); setkey(costofcash, iso2c)
+costofcash <- hhtime[, .SD, .SDcols=hhtime.keepvars][J(costofcash)]
+
+rm(hhtime.keepvars)
+
+str(costofcash)
+summary(costofcash)
+
+##### Interrupted here 2015 03 23 #####
