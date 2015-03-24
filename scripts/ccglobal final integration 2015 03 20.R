@@ -125,4 +125,63 @@ rm(hhtime.keepvars)
 str(costofcash)
 summary(costofcash)
 
-##### Interrupted here 2015 03 23 #####
+
+load("household_transit.Rda")
+setkey(hhtransit, iso2c)
+hhtransit.keepvars <- c("iso2c","transrate","transcost")
+
+tables()
+costofcash <- hhtransit[,.SD, .SDcols=c(hhtransit.keepvars)][J(costofcash)]
+
+
+names(costofcash)
+str(costofcash)
+summary(costofcash)
+
+
+## Fees and time; what about transit?
+
+rm(hhtime, remit, hhtransit)
+
+rm(hhtransit.keepvars, mergefail.1.countries)
+
+# #####
+# 1. (D) Currency Issuance
+
+
+##    Yan Bai's data on seigniorage
+# load("seigniorage_bai.Rda")
+
+load("bai.seigniorage.merge.Rda")
+load("bai.currissuance.merge.Rda")
+
+##      Structure and summary statistics
+currissue[,EUMember:=NULL]
+names(currissue)
+str(currissue)
+summary(currissue)
+
+
+##      Structure and summary statistics
+names(seign)
+str(seign)
+summary(seign)
+
+
+setkey(seign, "iso2c"); setkey(currissue, "iso2c")
+tables()
+
+##      Merge with selected variables
+costofcash <- seign[J(costofcash)]
+##      Merge with selected variables
+costofcash <- currissue[J(costofcash)]
+
+names(costofcash)
+str(costofcash)
+summary(costofcash)
+
+save.image("working.Rdata")
+save.image("archive 2015 03 23.Rdata")
+save.image("../.Rdata")
+
+##### Interrupted here 2015 03 25 #####
