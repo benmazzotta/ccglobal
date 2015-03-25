@@ -180,8 +180,31 @@ names(costofcash)
 str(costofcash)
 summary(costofcash)
 
+rm(currissue, seign)
+
+
+##    Informality data
+
+load("ElginOztunaliInformal08.Rda")
+names(informal08)
+informal08[,c("country", "year"):=NULL]
+tables()
+
+costofcash <- informal08[J(costofcash)]
+
+# test <- informal08[J(costofcash)]
+# str(test)
+# summary(test)
+# rm(test)
+# setdiff(costofcash$gdp, test$gdp)
+
+
+rm(informal08)
+
 save.image("working.Rdata")
-save.image("archive 2015 03 23.Rdata")
+save.image("archive 2015 03 25.Rdata")
 save.image("../.Rdata")
+
+##    NEXT : INFORMAL08 using ElginOztunali08.Rda
 
 ##### Interrupted here 2015 03 25 #####
