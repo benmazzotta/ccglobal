@@ -205,6 +205,7 @@ save.image("working.Rdata")
 save.image("archive 2015 03 25.Rdata")
 save.image("../.Rdata")
 
-##    NEXT : INFORMAL08 using ElginOztunali08.Rda
+##      Cash hoarding: not ready yet.
+##        Would be nice. Not today.
 
 ##### Interrupted here 2015 03 25 #####

@@ -1,0 +1,215 @@
+---
+title: "Plots for Global Cost of Cash Benchmarking Deck"
+author: "Ben Mazzotta"
+date: "Friday, March 27, 2015"
+output: html_document
+---
+
+This document creates plots from the Global Cost of Cash Benchmarking Study. The plots are written for HD dimensions:
+
+* 1280px wide
+* 720px tall
+* 18pt font
+
+
+```{r prelims}
+require(ggplot2); require(data.table)
+setwd("../data")
+load("ccglobal.plot.Rda")
+
+
+attr(costofcash$region, "levels")
+setattr(costofcash$region, "levels", c("Aggregates","Asia Pac","Eur Asia", "Latin Am Car","Mideast NAfr", "North Amer","South Asia","SS Africa"))
+costofcash[,income:=ordered(income, c("High income: OECD", "High income: nonOECD", "Upper middle income", "Lower middle income","Low income","Aggregates","Not classified"))]
+
+```
+
+## Warm-ups
+
+These charts validate the graphic design in `markdown` and `ggplot2`. Once we like the design, it should be plug and play.
+
+```{r plotstart, echo=FALSE, fig.width=9, fig.height=5, dpi=144, fig.path="../images/"}
+# boxplot(pop_MM~region, data=costofcash, horizontal=TRUE, las=1, log="x")
+qplot(region, pop_MM, data=costofcash, geom="boxplot", log="y")+coord_flip()
+
+plot1 <- ggplot(costofcash[!is.na(region),], aes(region, log(pop_MM)))
+plot1 + geom_boxplot(aes(fill=income))+coord_flip()+scale_fill_brewer()
+
+plot1+geom_jitter(aes(color=income))+scale_color_brewer(palette="Set1")+coord_flip()
+```
+
+
+## ATM Costs
+
+
+Charts planned: 
+
+* Regional boxplots for national costs
+* Regional boxplots for unit costs
+* Scatterplots for national vs. unit costs, by region
+
+```{r  plotATM, echo=FALSE, fig.width=9, fig.height=5, dpi=144, fig.path="../images/"}
+
+
+plot1 <- ggplot(costofcash[!is.na(region)], aes(region, log(ATMUnitCost)))
+plot2 <- ggplot(costofcash[!is.na(region)], aes(region, log(ATMNatlCost)))
+plot3 <- ggplot(costofcash, aes(log(ATMNatlCost), log(ATMUnitCost)))
+
+plot1 + geom_boxplot(aes(fill=region))+coord_flip()+scale_fill_brewer(palette="Blues") + 
+  labs(title="Unit Costs of ATM Maintenance \n Regional Comparison", y="ATM Unit Cost (log scale, USD)", x=NULL)
+plot2 + geom_boxplot(aes(fill=region))+coord_flip()+scale_fill_brewer(palette="Greens")+ 
+  labs(title="National Fleet Costs of ATM Maintenance \n Regional Comparison", y="ATM Fleet Cost (log scale, USD)", x=NULL)
+plot3 + geom_point(aes(color=region)) + scale_colour_brewer(palette="Set1")+ 
+  labs(title="ATM Fleet Costs vs. Unit Costs \n Global Scatterplot by Region", x="ATM Fleet Cost (log scale, USD)", y="ATM Unit Cost (log scale, USD)")
+
+
+##    Drill down by income
+plot1 + geom_boxplot(aes(fill=income))+coord_flip()+scale_fill_brewer(palette="Blues")+ 
+  labs(title="Unit Costs of ATM Maintenance \n Regional Comparison, Drill Down by Income", y="ATM Unit Cost (log scale, USD)", x=NULL)
+plot2 + geom_boxplot(aes(fill=income))+coord_flip()+scale_fill_brewer(palette="Greens")+ 
+  labs(title="National Fleet Costs of ATM Maintenance \n Regional Comparison, Drill Down by Income", y="ATM Fleet Cost (log scale, USD)", x=NULL)
+plot3 + geom_point(aes(colour=income)) + scale_colour_brewer(palette="Set1")+ 
+  labs(title="ATM Fleet Costs vs. Unit Costs \n Global Scatterplot by Income", x="ATM Fleet Cost (log scale, USD)", y="ATM Unit Cost (log scale, USD)")
+
+
+qplot(log(ATMNatlCost), log(ATMUnitCost), data=costofcash[region=="SS Africa"], geom="text", label=iso2c, color=income)+scale_color_brewer(palette="Dark2") + 
+  labs(title="National ATM Fleet Costs \n Regional Focus: Africa", x="National Cost of ATMs (log scale, USD)", y="Unit Cost of ATMs (log scale, USD)")
+qplot(log(ATMNatlCost), log(ATMUnitCost), data=costofcash[region=="Eur Asia"], geom="text", label=iso2c, color=income)+scale_color_brewer(palette="Dark2")+ 
+  labs(title="National ATM Fleet Costs \n Regional Focus: Europe and Central Asia", x="National Cost of ATMs (log scale, USD)", y="Unit Cost of ATMs (log scale, USD)")
+qplot(log(ATMNatlCost), log(ATMUnitCost), data=costofcash[region=="South Asia"], geom="text", label=iso2c, color=income)+scale_color_brewer(palette="Dark2")+ 
+  labs(title="National ATM Fleet Costs \n Regional Focus: South Asia", x="National Cost of ATMs (log scale, USD)", y="Unit Cost of ATMs (log scale, USD)")
+# qplot(log(ATMNatlCost), log(ATMUnitCost), data=costofcash[region=="North Amer"], geom="text", label=iso2c, color=income)+scale_color_brewer(palette="Dark2")+ 
+#   labs(title="National ATM Fleet Costs \n Regional Focus: North America", x="National Cost of ATMs (log scale, USD)", y="Unit Cost of ATMs (log scale, USD)")
+qplot(log(ATMNatlCost), log(ATMUnitCost), data=costofcash[region=="Latin Am Car"], geom="text", label=iso2c, color=income)+scale_color_brewer(palette="Dark2")+ 
+  labs(title="National ATM Fleet Costs \n Regional Focus: Latin America and Caribbean", x="National Cost of ATMs (log scale, USD)", y="Unit Cost of ATMs (log scale, USD)")
+qplot(log(ATMNatlCost), log(ATMUnitCost), data=costofcash[region=="Asia Pac"], geom="text", label=iso2c, color=income)+scale_color_brewer(palette="Dark2")+ 
+  labs(title="National ATM Fleet Costs \n Regional Focus: Asia Pacific", x="National Cost of ATMs (log scale, USD)", y="Unit Cost of ATMs (log scale, USD)")
+qplot(log(ATMNatlCost), log(ATMUnitCost), data=costofcash[region=="Mideast NAfr"], geom="text", label=iso2c, color=income)+scale_color_brewer(palette="Dark2")+ 
+  labs(title="National ATM Fleet Costs \n Regional Focus: Mideast and North Africa", x="National Cost of ATMs (log scale, USD)", y="Unit Cost of ATMs (log scale, USD)")
+
+
+```
+
+## Cash in transit
+
+Planned charts
+
+* World map
+* Regional rankings
+* Scatterplots of ATM vs CIT
+* Scatterplots of CIT vs Finclusion
+
+
+```{r plotcashintransit, fig.width=9, fig.height=5, dpi=144, fig.path="../images/"}
+plot1 <- ggplot(costofcash[!is.na(region)], aes(region, log(CITest)))
+plot2 <- ggplot(costofcash[!is.na(income)], aes(income, log(CITest)))
+plot3 <- ggplot(costofcash, aes(log(ATMNatlCost), log(CITest)))
+
+
+## Base plots
+plot1 + geom_boxplot() + coord_flip()
+plot2 + geom_boxplot() + coord_flip() 
+plot3 + geom_point() 
+
+## Drill down 
+plot1 + geom_boxplot(aes(fill=income)) + coord_flip() + scale_fill_brewer(palette="Set1") 
+plot2 + geom_boxplot(aes(fill=region)) + coord_flip() + scale_fill_brewer(palette="Dark2") 
+plot3 + geom_point(aes(color=income))  + scale_color_brewer(palette="Set1") 
+plot3 + geom_point(aes(color=region)) + scale_color_brewer(palette="Dark2") 
+
+
+##    Regional Scatterplots
+qplot(ATMNatlCost, CITest, data=costofcash[region=="SS Africa"], geom="text", color=income, label=iso2c, log="xy") + scale_color_brewer(palette="Dark2") + 
+  labs(title="CIT Costs in Africa (Modeled) \n Regional Focus and Comparison to ATM Fleet Cost", x="ATM Fleet Costs (log scale USD)", y="CIT Modeled Fleet Costs (log scale USD)")
+
+qplot(ATMNatlCost, CITest, data=costofcash[region=="South Asia"], geom="text", color=income, label=iso2c, log="xy") + scale_color_brewer(palette="Dark2") + 
+  labs(title="CIT Costs in South Asia (Modeled) \n Regional Focus and Comparison to ATM Fleet Cost", x="ATM Fleet Costs (log scale USD)", y="CIT Modeled Fleet Costs (log scale USD)")
+
+qplot(ATMNatlCost, CITest, data=costofcash[region=="Asia Pac"], geom="text", color=income, label=iso2c, log="xy") + scale_color_brewer(palette="Dark2") + 
+  labs(title="CIT Costs in Asia Pacific Region (Modeled) \n Regional Focus and Comparison to ATM Fleet Cost", x="ATM Fleet Costs (log scale USD)", y="CIT Modeled Fleet Costs (log scale USD)")
+
+qplot(ATMNatlCost, CITest, data=costofcash[region=="Mideast NAfr"], geom="text", color=income, label=iso2c, log="xy") + scale_color_brewer(palette="Dark2") + 
+  labs(title="CIT Costs in Mideast and North Africa (Modeled) \n Regional Focus and Comparison to ATM Fleet Cost", x="ATM Fleet Costs (log scale USD)", y="CIT Modeled Fleet Costs (log scale USD)")
+
+qplot(ATMNatlCost, CITest, data=costofcash[region=="Latin Am Car"], geom="text", color=income, label=iso2c, log="xy") + scale_color_brewer(palette="Dark2") + 
+  labs(title="CIT Costs in Latin America and Caribbean (Modeled) \n Regional Focus and Comparison to ATM Fleet Cost", x="ATM Fleet Costs (log scale USD)", y="CIT Modeled Fleet Costs (log scale USD)")
+
+
+## Income Group Focus
+qplot(ATMNatlCost, CITest, data=costofcash[income=="High income: nonOECD"], geom="text", color=income, label=iso2c, log="xy") + scale_color_brewer(palette="Dark2") + 
+  labs(title="CIT Costs in Africa (Modeled) \n Regional Focus and Comparison to ATM Fleet Cost", x="ATM Fleet Costs (log scale USD)", y="CIT Modeled Fleet Costs (log scale USD)")
+
+
+## Regional focus
+plot1 + geom_boxplot() + coord_flip() + facet_wrap(~income)
+plot2 + geom_boxplot() + coord_flip() + facet_wrap(~region)
+plot3 + geom_point(aes(color=income))  + scale_color_brewer(palette="Set1") + facet_wrap(~region)
+plot3 + geom_point(aes(color=region))  + scale_color_brewer(palette="Dark2") + facet_wrap(~income)
+
+```
+
+
+
+## Consumer costs
+
+Planned charts
+
+* World map
+* regional rankings
+* Scatterplot of time vs. fees
+  * Regional focus 
+  * Income bracket focus
+* Scatterplot of time vs financial inclusion
+
+
+```{r plothouseholdcosts, fig.width=9, fig.height=5, dpi=144, eval=FALSE, fig.path="../images/"}
+## Hello
+```
+
+
+## Currency issuance
+
+Planned charts
+
+* Cost of new issuance
+  * per capita costs vs. per capita GDP
+  * per capita costs vs. financial inclusion
+* Value of seigniorage
+  * per capita costs vs. per capita GDP
+  * per capita costs vs. financial inclusion
+* Scatterplots of seigniorage vs. issuance
+  * national costs
+  * per capita costs
+  * Regional focus
+  * income group focus
+  
+```{r plotcurrencyissuance, fig.width=9, fig.height=5, dpi=144, eval=FALSE, fig.path="../images/"}
+## Hello
+```
+
+  
+## Tax gap
+
+Planned charts
+
+* Value of tax gap
+  * Regional comparison
+  * Income group comparison
+  * Scatterplot vs. per capita GDP
+* Scatterplots of seigniorage vs. tax gap
+  * national costs
+  * regional focus
+  * income group focus
+* Scatterplots of currency issuance vs. tax gap
+  * national costs
+  * regional focus
+  * income group focus
+
+  
+```{r plottaxgap, fig.width=9, fig.height=5, dpi=144, eval=FALSE, fig.path="../images/"}
+## Hello
+```
+
+## Cash hoards
+
+Data is not yet ready.

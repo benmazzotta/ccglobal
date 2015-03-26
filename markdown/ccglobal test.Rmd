@@ -1,0 +1,39 @@
+---
+title: "Plots for Global Cost of Cash Benchmarking Deck"
+author: "Ben Mazzotta"
+date: "Friday, March 27, 2015"
+output: html_document
+---
+  
+This document creates plots from the Global Cost of Cash Benchmarking Study. The plots are written for HD dimensions:
+  
+  * 1280px wide
+* 720px tall
+* 18pt font
+
+
+```{r prelims}
+require(ggplot2); require(data.table)
+setwd("../data")
+load("ccglobal.plot.Rda")
+
+
+attr(costofcash$region, "levels")
+setattr(costofcash$region, "levels", c("Aggregates","Asia Pac","Eur Asia", "Latin Am Car","Mideast NAfr", "North Amer","South Asia","SS Africa"))
+costofcash[,income:=ordered(income, c("High income: OECD", "High income: nonOECD", "Upper middle income", "Lower middle income","Low income","Aggregates","Not classified"))]
+
+```
+
+## Warm-ups
+
+These charts validate the graphic design in `markdown` and `ggplot2`. Once we like the design, it should be plug and play.
+
+```{r plotstart, echo=FALSE, fig.width=9, fig.height=5, dpi=144, fig.path="../images/"}
+# boxplot(pop_MM~region, data=costofcash, horizontal=TRUE, las=1, log="x")
+qplot(region, pop_MM, data=costofcash, geom="boxplot", log="y")+coord_flip()
+
+plot1 <- ggplot(costofcash[!is.na(region),], aes(region, log(pop_MM)))
+plot1 + geom_boxplot(aes(fill=income))+coord_flip()+scale_fill_brewer()
+
+plot1+geom_jitter(aes(color=income))+scale_color_brewer(palette="Set1")+coord_flip()
+```
