@@ -162,8 +162,62 @@ Planned charts
 * Scatterplot of time vs financial inclusion
 
 
-```{r plothouseholdcosts, fig.width=9, fig.height=5, dpi=144, eval=FALSE, fig.path="../images/"}
+```{r plothouseholdcosts, fig.width=9, fig.height=5, dpi=144, fig.path="../images/"}
 ## Hello
+plot1 <- ggplot(costofcash, aes(log10(cashfees), log10(transcost)))
+plot2 <- ggplot(costofcash, aes(log10(cashfees), log10(timespent)))
+plot3 <- ggplot(costofcash, aes(log10(transcost), log10(timespent)))
+plot4 <- ggplot(costofcash, aes(log10(transcost/pop_MM), log10(timespent/pop_MM)))
+
+
+##    Facets by region
+plot1 + geom_point() + facet_wrap(~region) + 
+  labs(title="Cost of Cash: Fees vs. Transit", x="Cash Fees (log scale, USD MM)", y="Transit Cost (log scale, USD MM)")
+plot2 + geom_point() + facet_wrap(~region)+ 
+  labs(title="Cost of Cash: Fees vs. Time Spent", x="Cash Fees (log scale, USD MM)", y="Time spent (log scale, minutes MM)")
+plot3 + geom_point() + facet_wrap(~region)+ 
+  labs(title="Cost of Cash: Transit vs. Time Spent", x="Cash Fees (log scale, USD MM)", y="Time spent (log scale, minutes MM)")
+plot4 + geom_point() + facet_wrap(~region)+ 
+  labs(title="Cost of Cash: Per capita transit vs. Per capita time spent", x="Transit cost per capita (log scale, USD MM)", y="Time spent per capita (log scale, minutes)")
+
+
+plot4 + geom_point(aes(color=region)) + scale_color_brewer(palette="Set1") + 
+  labs(title="Cost of Cash: Per capita transit vs. Per capita time spent", x="Transit cost per capita (log scale, USD MM)", y="Time spent per capita (log scale, minutes)")
+
+
+## Color scatterplots by income
+
+plot1 + geom_point(aes(color=income)) + scale_color_brewer(palette="RdBu") + 
+  labs(title="Cost of Cash: Fees vs. Transit", x="Cash Fees (log scale, USD MM)", y="Transit Cost (log scale, USD MM)")
+plot2 + geom_point(aes(color=income)) + scale_color_brewer(palette="RdBu") + 
+  labs(title="Cost of Cash: Fees vs. Time Spent", x="Cash Fees (log scale, USD MM)", y="Time spent (log scale, minutes MM)")
+plot3 + geom_point(aes(color=income)) + scale_color_brewer(palette="RdBu") + 
+  labs(title="Cost of Cash: Transit vs. Time Spent", x="Cash Fees (log scale, USD MM)", y="Time spent (log scale, minutes MM)")
+
+plot4 + geom_point(aes(color=income)) + scale_color_brewer(palette="RdBu") + 
+  labs(title="Cost of Cash: Per capita transit vs. Per capita time spent", x="Transit cost per capita (log scale, USD MM)", y="Time spent per capita (log scale, minutes)")
+
+
+##    Focus by region
+qplot(log10(transcost), log10(cashfees), data=costofcash[region=="SS Africa"], geom="text", label=iso2c, color=income) + scale_color_brewer(palette="Set1")+
+  labs(title="Household Cash Costs: Cash Fees and Transit Costs \n Regional Focus: Sub-Saharan Africa", x="Transit Cost (log scale, USD MM)", y="Cash Fees (log scale, USD MM)")
+
+qplot(log10(transcost), log10(cashfees), data=costofcash[region=="Asia Pac"], geom="text", label=iso2c, color=income) + scale_color_brewer(palette="Set1")+
+  labs(title="Household Cash Costs: Cash Fees and Transit Costs \n Regional Focus: East Asia Pacific", x="Transit Cost (log scale, USD MM)", y="Cash Fees (log scale, USD MM)")
+
+qplot(log10(transcost), log10(cashfees), data=costofcash[region=="Eur Asia"], geom="text", label=iso2c, color=income) + scale_color_brewer(palette="Set1")+
+  labs(title="Household Cash Costs: Cash Fees and Transit Costs \n Regional Focus: Europe and Central Asia", x="Transit Cost (log scale, USD MM)", y="Cash Fees (log scale, USD MM)")
+
+qplot(log10(transcost), log10(cashfees), data=costofcash[region=="Latin Am Car"], geom="text", label=iso2c, color=income) + scale_color_brewer(palette="Set1")+
+  labs(title="Household Cash Costs: Cash Fees and Transit Costs \n Regional Focus: Latin America and Caribbean", x="Transit Cost (log scale, USD MM)", y="Cash Fees (log scale, USD MM)")
+
+qplot(log10(transcost), log10(cashfees), data=costofcash[region=="Mideast NAfr"], geom="text", label=iso2c, color=income) + scale_color_brewer(palette="Set1")+
+  labs(title="Household Cash Costs: Cash Fees and Transit Costs \n Regional Focus: Mideast and North Africa", x="Transit Cost (log scale, USD MM)", y="Cash Fees (log scale, USD MM)")
+
+qplot(log10(transcost), log10(cashfees), data=costofcash[region=="South Asia"], geom="text", label=iso2c, color=income) + scale_color_brewer(palette="Set1")+
+  labs(title="Household Cash Costs: Cash Fees and Transit Costs \n Regional Focus: South Asia", x="Transit Cost (log scale, USD MM)", y="Cash Fees (log scale, USD MM)")
+
+
 ```
 
 
@@ -183,8 +237,81 @@ Planned charts
   * Regional focus
   * income group focus
   
-```{r plotcurrencyissuance, fig.width=9, fig.height=5, dpi=144, eval=FALSE, fig.path="../images/"}
-## Hello
+```{r plotcurrencyissuance, fig.width=9, fig.height=5, dpi=144, fig.path="../images/"}
+## Value of seigniorage
+
+plot1 <- ggplot(costofcash, aes(log10(gdp*10^-6), log10(seigniorage)))
+plot2 <- ggplot(costofcash[!is.na(region),], aes(region, log10(seigniorage)))
+plot3 <- ggplot(costofcash[!is.na(income),], aes(income, log10(seigniorage)))
+
+plot1 + geom_text(aes(color=region, label=iso2c)) + scale_color_brewer(palette="Dark2")
+plot1 + geom_point(aes(color=region)) + scale_color_brewer(palette="Dark2")
+plot2 + geom_boxplot(aes(color=region)) + scale_color_brewer(palette="Dark2") + coord_flip()
+plot3 + geom_boxplot(aes(color=income)) + scale_color_brewer(palette="Dark2") + coord_flip()
+
+plot11 <- ggplot(costofcash[region=="SS Africa" & !is.na(seigniorage),], aes(log10(gdp*10^-6), log10(seigniorage), label=iso2c, color=income))
+
+plot12 <- ggplot(costofcash[region=="South Asia" & !is.na(seigniorage),], aes(log10(gdp*10^-6), log10(seigniorage), label=iso2c, color=income))
+
+plot13 <- ggplot(costofcash[region=="Mideast NAfr" & !is.na(seigniorage),], aes(log10(gdp*10^-6), log10(seigniorage), label=iso2c, color=income))
+
+plot14 <- ggplot(costofcash[region=="Latin Am Car" & !is.na(seigniorage),], aes(log10(gdp*10^-6), log10(seigniorage), label=iso2c, color=income))
+
+plot15 <- ggplot(costofcash[region=="Eur Asia" & !is.na(seigniorage),], aes(log10(gdp*10^-6), log10(seigniorage), label=iso2c, color=income))
+
+plot16 <- ggplot(costofcash[region=="Asia Pac" & !is.na(seigniorage),], aes(log10(gdp*10^-6), log10(seigniorage), label=iso2c, color=income))
+
+
+
+plot11 + geom_text() + 
+  scale_color_brewer(palette="Set1") + labs(title="Seigniorage Income Vs. GDP \n Regional Focus: Africa", x="GDP at PPP (log scale, USD MM)", y="Seigniorage (log scale, USD MM)")
+plot12 + geom_text() + 
+  scale_color_brewer(palette="Set1") + labs(title="Seigniorage Income Vs. GDP \n Regional Focus: South Asia", x="GDP at PPP (log scale, USD MM)", y="Seigniorage (log scale, USD MM)")
+plot13 + geom_text() + 
+  scale_color_brewer(palette="Set1") + labs(title="Seigniorage Income Vs. GDP \n Regional Focus: Mideast North Africa", x="GDP at PPP (log scale, USD MM)", y="Seigniorage (log scale, USD MM)")
+plot14 + geom_text() + 
+  scale_color_brewer(palette="Set1") + labs(title="Seigniorage Income Vs. GDP \n Regional Focus: Latin America Caribbean", x="GDP at PPP (log scale, USD MM)", y="Seigniorage (log scale, USD MM)")
+plot15 + geom_text() + 
+  scale_color_brewer(palette="Set1") + labs(title="Seigniorage Income Vs. GDP \n Regional Focus: Europe and Central Asia", x="GDP at PPP (log scale, USD MM)", y="Seigniorage (log scale, USD MM)")
+plot16 + geom_text() + 
+  scale_color_brewer(palette="Set1") + labs(title="Seigniorage Income Vs. GDP \n Regional Focus: East Asia Pacific", x="GDP at PPP (log scale, USD MM)", y="Seigniorage (log scale, USD MM)")
+
+##  Cost of Currency Issuance
+
+plot1 <- ggplot(costofcash, aes(log10(gdp*10^-6), log10(CurrIssue))) 
+plot2 <- ggplot(costofcash[!is.na(region),], aes(region, log10(CurrIssue)))
+plot3 <- ggplot(costofcash[!is.na(income),], aes(income, log10(CurrIssue)))
+
+
+plot1 + geom_text(aes(color=region, label=iso2c)) + scale_color_brewer(palette="Dark2") + labs(title="Currency Issuance", x="GDP (log scale, USD MM)", y="Currency Issuance Costs (log scale, USD MM)")
+
+plot1 + geom_point(aes(color=region)) + scale_color_brewer(palette="Dark2")+ labs(title="Currency Issuance", x="GDP (log scale, USD MM)", y="Currency Issuance Costs (log scale, USD MM)")
+
+plot2 + geom_boxplot(aes(color=region)) + scale_color_brewer(palette="Dark2") + coord_flip()+ labs(title="Curreny Issuance \n Boxplots by Region", x=NULL, y="Currency Issuance Costs (log scale, USD MM)")
+
+plot3 + geom_boxplot(aes(color=income)) + scale_color_brewer(palette="Dark2") + coord_flip()+ labs(title="Currency Issuance \n Boxplots by Income Group", x=NULL, y="Currency Issuance Costs (log scale, USD MM)")
+ 
+
+## Currency issuance vs. seigniorage revenue
+
+plot1 <- ggplot(costofcash, aes(log10(CurrIssue), log10(seigniorage), color=income, label=iso2c)) + labs(title="Currency Issuance vs. Seigniorage Revenue", x="Currency Issuance (log scale, USD MM)", y="Seigniorage Revenue (log scale, USD MM)")
+
+plot11 <- ggplot(costofcash[region=="SS Africa"], aes(log10(CurrIssue), log10(seigniorage), color=income, label=iso2c)) + labs(title="Currency Issuance vs. Seigniorage Revenue \n Regional Focus: Africa", x="Currency Issuance (log scale, USD MM)", y="Seigniorage Revenue (log scale, USD MM)")
+
+plot12 <- ggplot(costofcash[region=="South Asia"], aes(log10(CurrIssue), log10(seigniorage), color=income, label=iso2c)) + labs(title="Currency Issuance vs. Seigniorage Revenue \n Regional Focus: South Asia", x="Currency Issuance (log scale, USD MM)", y="Seigniorage Revenue (log scale, USD MM)")
+
+plot13 <- ggplot(costofcash[region=="Mideast NAfr"], aes(log10(CurrIssue), log10(seigniorage), color=income, label=iso2c)) + labs(title="Currency Issuance vs. Seigniorage Revenue \n Regional Focus: Mideast and North Africa", x="Currency Issuance (log scale, USD MM)", y="Seigniorage Revenue (log scale, USD MM)")
+
+plot14 <- ggplot(costofcash[region=="Asia Pac"], aes(log10(CurrIssue), log10(seigniorage), color=income, label=iso2c)) + labs(title="Currency Issuance vs. Seigniorage Revenue \n Regional Focus: East Asia Pacific", x="Currency Issuance (log scale, USD MM)", y="Seigniorage Revenue (log scale, USD MM)")
+
+plot15 <- ggplot(costofcash[region=="Latin Am Car"], aes(log10(CurrIssue), log10(seigniorage), color=income, label=iso2c)) + labs(title="Currency Issuance vs. Seigniorage Revenue \n Regional Focus: Latin America Caribbean", x="Currency Issuance (log scale, USD MM)", y="Seigniorage Revenue (log scale, USD MM)")
+
+
+plot16 <- ggplot(costofcash[region=="Eur Asia"], aes(log10(CurrIssue), log10(seigniorage), color=income, label=iso2c)) + labs(title="Currency Issuance vs. Seigniorage Revenue \n Regional Focus: Europe Central Asia", x="Currency Issuance (log scale, USD MM)", y="Seigniorage Revenue (log scale, USD MM)")
+
+
+
+
 ```
 
   
@@ -206,8 +333,39 @@ Planned charts
   * income group focus
 
   
-```{r plottaxgap, fig.width=9, fig.height=5, dpi=144, eval=FALSE, fig.path="../images/"}
+```{r plottaxgap, fig.width=9, fig.height=5, dpi=144, fig.path="../images/"}
 ## Hello
+
+plot1 <- ggplot(costofcash, aes(seigniorage/gdp*10^8, taxgap, color=income, label=iso2c)) 
+plot2 <- ggplot(costofcash[region=="SS Africa",], aes(region, taxgap, color=income))
+plot3 <- ggplot(costofcash[!is.na(income),], aes(income, taxgap))
+plot4 <- ggplot(costofcash, aes(GDPcap, taxgap, color=income, label=iso2c))
+
+
+plot11 <- ggplot(costofcash[region=="SS Africa",], aes(seigniorage/gdp*10*8, taxgap, color=income, label=iso2c))
+plot12 <- ggplot(costofcash[region=="South Asia",], aes(seigniorage/gdp*10*8, taxgap, color=income, label=iso2c))
+plot13 <- ggplot(costofcash[region=="Mideast NAfr",], aes(seigniorage/gdp*10*8, taxgap, color=income, label=iso2c))
+plot14 <- ggplot(costofcash[region=="Latin Am Car",], aes(seigniorage/gdp*10*8, taxgap, color=income, label=iso2c))
+plot15 <- ggplot(costofcash[region=="Eur Asia",], aes(seigniorage/gdp*10*8, taxgap, color=income, label=iso2c))
+plot16 <- ggplot(costofcash[region=="Asia Pac",], aes(seigniorage/gdp*10*8, taxgap, color=income, label=iso2c))
+
+plot1 + geom_point() + scale_color_brewer(palette="RdBu") + labs(title="Tax Gap vs. Seigniorage Revenue", x="Seigniorage (% of GDP)", y="Tax Gap (% of GDP)")
+
+plot1 + geom_text() + scale_color_brewer(palette="RdBu") + labs(title="Tax Gap vs. Seigniorage Revenue", x="Seigniorage (% of GDP)", y="Tax Gap (% of GDP)")
+
+
+plot11 + geom_text() + scale_color_brewer(palette="RdBu") + labs(title="Tax Gap \n Regional Focus: Africa", x="Seigniorage (% of GDP)", y="Tax Gap (% of GDP)")
+
+plot12 + geom_text() + scale_color_brewer(palette="RdBu") + labs(title="Tax Gap \n Regional Focus: South Asia", x="Seigniorage (% of GDP)", y="Tax Gap (% of GDP)")
+
+plot13 + geom_text() + scale_color_brewer(palette="RdBu")  + labs(title="Tax Gap \n Regional Focus: Mideast North Africa", x="Seigniorage (% of GDP)", y="Tax Gap (% of GDP)")
+
+plot14 + geom_text() + scale_color_brewer(palette="RdBu")  + labs(title="Tax Gap \n Regional Focus: Latin America Caribbean", x="Seigniorage (% of GDP)", y="Tax Gap (% of GDP)")
+
+plot15 + geom_text() + scale_color_brewer(palette="RdBu")  + labs(title="Tax Gap \n Regional Focus: Europe Central Asia", x="Seigniorage (% of GDP)", y="Tax Gap (% of GDP)")
+
+plot16 + geom_text() + scale_color_brewer(palette="RdBu")  + labs(title="Tax Gap \n Regional Focus: East Asia Pacific", x="Seigniorage (% of GDP)", y="Tax Gap (% of GDP)")
+
 ```
 
 ## Cash hoards
